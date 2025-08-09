@@ -1,0 +1,13 @@
+[user]
+    name = avainfo
+    email = avainfoconseils@gmail.com
+[alias]
+    lg = log --graph --abbrev-commit --decorate --date=relative --all
+    st = status
+    gsw = switch
+[color]
+    ui = auto
+[push]
+    default = current
+[pull]
+    rebase = false
