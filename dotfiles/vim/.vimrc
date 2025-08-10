@@ -26,3 +26,12 @@ nmap <F2> :w<CR>
 imap <F2> <ESC>:w<CR>i
 
 set nu rnu
+
+" Ctrl + arrow
+if &term =~ 'xterm' || &term =~ 'tmux'
+  map <Esc>[1;5D <C-Left>
+  map <Esc>[1;5C <C-Right>
+  imap <Esc>[1;5D <C-Left>
+  imap <Esc>[1;5C <C-Right>
+endif
+
