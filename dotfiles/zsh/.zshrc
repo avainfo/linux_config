@@ -114,7 +114,11 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias c="gcc -Wall -Wextra -Werror $1 && ./a.out && rm -f a.out"
+c() {
+    cc -Wall -Wextra -Werror "$@" && ./a.out && rm -f a.out
+}
+
+alias gs="git status"
 
 if [ -z "$KITTY_WINDOW_ID" ]; then
 	alias k="kitty --detach && exit"
