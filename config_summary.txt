@@ -1,0 +1,73 @@
+⚙️ Dotfiles Configuration Summary
+
+🖥️ Terminal (Kitty)
+- Kitty installed in user-space (~/kitty.app/bin/kitty) for 42.
+- Config file: ~/.config/kitty/kitty.conf
+- Settings:
+  * JetBrainsMono Nerd Font
+  * Dark background (#1a1a1a)
+  * Transparency (background_opacity 0.92)
+  * Block cursor
+  * Adjusted color palette
+
+🐚 Zsh + Oh My Zsh
+- Oh My Zsh installed (~/.oh-my-zsh/)
+- Zsh set as default shell
+- Plugins installed via script (ohmyzsh-plugins/install-plugins.sh):
+  * zsh-autosuggestions
+  * zsh-syntax-highlighting
+- Current prompt based on Powerlevel10k with experiments on a custom prompt:
+  * 2 lines with symbols ╭─ and ╰─
+  * Git info: branch + commits ahead/behind + modified/staged/conflicted files
+  * Logical colors (green = success, red = error, cyan = info, yellow = changes)
+
+🪟 Tmux
+- Config file: ~/.tmux.conf
+  * Truecolor enabled (tmux-256color + :RGB)
+  * Mouse enabled (selection, scroll, resize, clicks)
+  * Vi copy mode (v to select, y to copy)
+  * Quick splits (| horizontal, - vertical)
+  * Reload config (prefix + r)
+  * Custom status bar (session on the left, time/date on the right)
+  * Custom pane-border-format (tests with b:pane_current_path, $HOME conditions, special display for ava)
+
+✏️ Vim
+- Config file: ~/.vimrc
+  * Line numbers + relative line numbers
+  * Indentation: 4 spaces
+  * termguicolors enabled
+  * Syntax highlighting enabled
+  * System clipboard enabled
+
+🌀 Git
+- Config file: ~/.gitconfig
+  * Name + email set
+  * Aliases (st, lg, co, ci)
+  * Push = current branch by default
+  * Colors enabled
+- gh (GitHub CLI) installed and used for simplified authentication
+
+🎨 LS_COLORS & dircolors
+- LS_COLORS check: executables = light green (01;32)
+- Customization planned via ~/.dircolors:
+  * EXEC in bright cyan or turquoise
+  * OTHER_WRITABLE (e.g., gcc_64) in magenta or orange
+  * STICKY_OTHER_WRITABLE (e.g., /tmp) in red
+
+🛠 Bin / scripts
+- ~/bin added to PATH
+- Planned for utility scripts:
+  * build: compile + run
+  * runv: run under valgrind
+  * mkproj: C project skeleton
+
+🔒 Debug
+- ~/.gdbinit:
+  * Pagination off
+  * Pretty print enabled
+  * Quick backtrace (bt10)
+  * Breakpoints pending on
+
+📐 Formatting files
+- .editorconfig: 4-space indentation, LF, max line length 80
+- .clang-format: style close to 42 norm (LLVM base, 4-space indent, column max 80, no tabs)

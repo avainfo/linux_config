@@ -1,6 +1,6 @@
 [user]
-    name = avainfo
-    email = avainfoconseils@gmail.com
+	name = avainfo
+	email = avainfoconseils@gmail.com
 [alias]
     lg = log --graph --abbrev-commit --decorate --date=relative --all
     st = status

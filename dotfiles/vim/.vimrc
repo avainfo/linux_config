@@ -11,6 +11,7 @@ set nocompatible
 
 " Indent
 set smartindent
+set cindent
 set tabstop=4
 set shiftwidth=4
 set textwidth=120
@@ -18,7 +19,6 @@ set textwidth=120
 " Syntax
 set t_Co=256
 syntax on
-set showmatch
 set comments=sl:/*,mb:\ *,elx:\ */
 
 " Shortcuts
@@ -34,4 +34,3 @@ if &term =~ 'xterm' || &term =~ 'tmux'
   imap <Esc>[1;5D <C-Left>
   imap <Esc>[1;5C <C-Right>
 endif
-
