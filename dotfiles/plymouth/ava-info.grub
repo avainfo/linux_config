@@ -1,0 +1,3 @@
+if background_color 3,58,99; then
+  clear
+fi

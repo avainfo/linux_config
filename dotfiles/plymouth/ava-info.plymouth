@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Ava Info Theme
+Description=Ava Info Boot Screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/ava-info
+ScriptFile=/usr/share/plymouth/themes/ava-info/ava-info.script
