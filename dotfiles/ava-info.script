@@ -148,46 +148,24 @@ fun recalc_logo () {
 }
 
 fun recalc_dots () {
-	spacing		= 16;
-	margin_y	= 96;
-	count		= progress_indicator.count;
-	dot_w		= progress_indicator.dot_w;
-	dot_h		= progress_indicator.dot_h;
-
-	total_w = count * dot_w + (count - 1) * spacing;
-
-	start_x = Window.GetX() + (Window.GetWidth() - total_w) / 2;
-	y       = Window.GetY() + Window.GetHeight() - margin_y - dot_h;
-
-	i = 0;
-	while (i < count) {
-		x = start_x + i * (dot_w + spacing);
-		progress_indicator.bullets_off[i].sprite.SetX(x);
-		progress_indicator.bullets_off[i].sprite.SetY(y);
-		progress_indicator.bullets_off[i].sprite.SetZ(1000);
-
-		progress_indicator.bullets_on[i].sprite.SetX(x);
-		progress_indicator.bullets_on[i].sprite.SetY(y);
-		progress_indicator.bullets_on[i].sprite.SetZ(10000);
-
-		i = i + 1;
-	}
+	progress_indicator.bullet_width = progress_indicator.bullet_off.GetWidth();
+	progress_indicator.bullet_height = progress_indicator.bullet_off.GetHeight();
+	progress_indicator.bullet_hspacing = progress_indicator.bullet_width * 1.1;
+	progress_indicator.width = progress_indicator.bullet_width * 5;
+	progress_indicator.height = progress_indicator.bullet_height;
+	progress_indicator.y = (Window.GetHeight() / 10) * 9;
+	progress_indicator.x = Window.GetWidth() / 2 - (progress_indicator.width / 2); # logo.x + 26;
+	progress_indicator.count = 5;
+	progress_indicator.dot_w = progress_indicator.bullet_off.GetWidth();
+	progress_indicator.dot_h = progress_indicator.bullet_off.GetHeight();
 }
 
 
 fun recalc_signature () {
-	margin_bottom = 48;
-
-	sig_w = footer_image.GetWidth();
-	sig_h = footer_image.GetHeight();
-
-	x = Window.GetX() + (Window.GetWidth()  - sig_w) / 2;
-	y = Window.GetY() +  Window.GetHeight() - margin_bottom - sig_h;
-
-	footer.sprite.SetX(x);
-	footer.sprite.SetY(y);
-	footer.sprite.SetZ(1001);
-	footer.sprite.SetOpacity(1);
+	footer.SetX(Window.GetX() + 20);
+	footer.SetY(Window.GetY() + Window.GetHeight() - footer_img.GetHeight() - 20);
+	footer.SetZ(1000);
+	footer.SetOpacity(1.0);
 }
 
 
