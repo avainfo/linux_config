@@ -148,43 +148,30 @@ fun recalc_logo () {
 }
 
 fun recalc_dots () {
-	    count    = 5;
-		spacing  = progress_indicator.bullet_hspacing;
-		bullet_w = progress_indicator.bullet_off.GetWidth();
-		bullet_h = progress_indicator.bullet_off.GetHeight();
+	count    = 5;
+	bullet_w = progress_indicator.bullet_off.GetWidth();
+	bullet_h = progress_indicator.bullet_off.GetHeight();
+	spacing  = progress_indicator.bullet_hspacing;
 
-		total_w = count * bullet_w + (count - 1) * spacing;
-		start_x = (Window.GetWidth() - total_w) / 2;
-		y = Window.GetHeight() - bullet_h - 96;   # marge depuis le bas (96px)
+	total_w = count * bullet_w + (count - 1) * spacing;
+	start_x = Window.GetX() + (Window.GetWidth() - total_w) / 2; 
+	y = Window.GetY() + Window.GetHeight() - bullet_h - 96;
 
-		i = 0;
-		while (i < count) {
-			x = start_x + i * (bullet_w + spacing);
+	i = 0;
+	while (i < count) {
+		x = start_x + i * (bullet_w + spacing);
 
-		progress_indicator.bullets_off[i].sprite.SetX(x);
-		progress_indicator.bullets_off[i].sprite.SetY(y);
+		progress_indicator.bullets_off[i].x = x;
+		progress_indicator.bullets_off[i].y = y;
+		progress_indicator.bullets_off[i].sprite.SetPosition(x, y, 1000);
 
-		# repositionne ON (par dessus)
-		progress_indicator.bullets_on[i].sprite.SetX(x);
-		progress_indicator.bullets_on[i].sprite.SetY(y);
+		progress_indicator.bullets_on[i].x = x;
+		progress_indicator.bullets_on[i].y = y;
+		progress_indicator.bullets_on[i].sprite.SetPosition(x, y, 10000);
 
 		i = i + 1;
 	}
 }
-
-fun recalc_dots () {
-	progress_indicator.bullet_width = progress_indicator.bullet_off.GetWidth();
-	progress_indicator.bullet_height = progress_indicator.bullet_off.GetHeight();
-	progress_indicator.bullet_hspacing = progress_indicator.bullet_width * 1.1;
-	progress_indicator.width = progress_indicator.bullet_width * 5;
-	progress_indicator.height = progress_indicator.bullet_height;
-	progress_indicator.y = (Window.GetHeight() / 10) * 9;
-	progress_indicator.x = Window.GetWidth() / 2 - (progress_indicator.width / 2); # logo.x + 26;
-	progress_indicator.count = 5;
-	progress_indicator.dot_w = progress_indicator.bullet_off.GetWidth();
-	progress_indicator.dot_h = progress_indicator.bullet_off.GetHeight();
-}
-
 
 fun recalc_signature () {
 	footer.SetX(Window.GetX() + 20);
@@ -287,14 +274,15 @@ fun switch_on_bullets () {
 
 # Implement in boot progress callback
 fun animate_progress_indicator (progress, time) {
-    recalc_logo();
-	recalc_dots();
-	recalc_signature();
-	
 	if (global.progress_time == NULL) {
         global.progress_time = progress;  #time;
         switch_off_bullets ();
     }
+    
+	recalc_logo();
+	recalc_signature();
+	recalc_dots();
+	
 
     if ((progress - global.progress_time) >= 1.0) {
         global.progress_time = progress;
