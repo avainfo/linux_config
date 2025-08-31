@@ -104,6 +104,9 @@ progress_indicator.width = progress_indicator.bullet_width * 5;
 progress_indicator.height = progress_indicator.bullet_height;
 progress_indicator.y = (Window.GetHeight() / 10) * 9;
 progress_indicator.x = Window.GetWidth() / 2 - (progress_indicator.width / 2); # logo.x + 26;
+progress_indicator.count = 5;
+progress_indicator.dot_w = progress_indicator.bullet_off.GetWidth();
+progress_indicator.dot_h = progress_indicator.bullet_off.GetHeight();
 
 # Made By title
 text_colour.red = 1.0;
@@ -147,9 +150,9 @@ fun recalc_logo () {
 fun recalc_dots () {
 	spacing		= 16;
 	margin_y	= 96;
-	count		= progress.count;
-	dot_w		= progress.dot_w;
-	dot_h		= progress.dot_h;
+	count		= progress_indicator.count;
+	dot_w		= progress_indicator.dot_w;
+	dot_h		= progress_indicator.dot_h;
 
 	total_w = count * dot_w + (count - 1) * spacing;
 
@@ -159,9 +162,14 @@ fun recalc_dots () {
 	i = 0;
 	while (i < count) {
 		x = start_x + i * (dot_w + spacing);
-		progress.sprites[i].SetX(x);
-		progress.sprites[i].SetY(y);
-		progress.sprites[i].SetZ(1000);
+		progress_indicator.bullets_off[i].sprite.SetX(x);
+		progress_indicator.bullets_off[i].sprite.SetY(y);
+		progress_indicator.bullets_off[i].sprite.SetZ(1000);
+
+		progress_indicator.bullets_on[i].sprite.SetX(x);
+		progress_indicator.bullets_on[i].sprite.SetY(y);
+		progress_indicator.bullets_on[i].sprite.SetZ(10000);
+
 		i = i + 1;
 	}
 }
@@ -170,16 +178,16 @@ fun recalc_dots () {
 fun recalc_signature () {
 	margin_bottom = 48;
 
-	sig_w = signature.image.GetWidth();
-	sig_h = signature.image.GetHeight();
+	sig_w = footer_image.GetWidth();
+	sig_h = footer_image.GetHeight();
 
 	x = Window.GetX() + (Window.GetWidth()  - sig_w) / 2;
 	y = Window.GetY() +  Window.GetHeight() - margin_bottom - sig_h;
 
-	signature.sprite.SetX(x);
-	signature.sprite.SetY(y);
-	signature.sprite.SetZ(1001);
-	signature.sprite.SetOpacity(1);
+	footer.sprite.SetX(x);
+	footer.sprite.SetY(y);
+	footer.sprite.SetZ(1001);
+	footer.sprite.SetOpacity(1);
 }
 
 
@@ -276,7 +284,11 @@ fun switch_on_bullets () {
 
 # Implement in boot progress callback
 fun animate_progress_indicator (progress, time) {
-    if (global.progress_time == NULL) {
+    recalc_logo();
+	recalc_signature();
+	recalc_dots();
+	
+	if (global.progress_time == NULL) {
         global.progress_time = progress;  #time;
         switch_off_bullets ();
     }
@@ -300,17 +312,6 @@ fun animate_progress_indicator (progress, time) {
                               global.times_bullets_switched, 1.0);
         }
     }
-    
-    
-    # Start setting bullets to "on" with translucency
-#    for (index = 0; index <= 5; index++) {
-#        opacity = 0.0;
-#        while (opacity <= 1.0) {
-#            switch_on_bullet (progress_indicator.bullets_off, progress_indicator.bullets_on,
-#                              index, opacity);
-#            opacity += 0.1;
-#        }
-#    }
 }
 
 
