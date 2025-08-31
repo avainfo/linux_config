@@ -128,14 +128,28 @@ first_line_height = ImageToTintedText ("AfpqtM").GetHeight();
 # a bit if needed.
 top_of_the_text = TextYOffset();
 
+fun recalc_logo () {
+	max_w = Window.GetWidth() * 0.4;
+	max_h = Window.GetHeight() * 0.4;
+	logo.image.SetMaxSize (max_w, max_h);
+
+	logo.width  = logo.image.GetWidth();
+	logo.height = logo.image.GetHeight();
+
+	logo.x = Window.GetX() + (Window.GetWidth()  - logo.width)  / 2;
+	logo.y = Window.GetY() + (Window.GetHeight() - logo.height) / 2;
+
+	logo.sprite.SetX(logo.x);
+	logo.sprite.SetY(logo.y);
+	logo.sprite.SetZ(1000);
+}
+
 #-----------------------------------------Logo functions------------------------------
 
 # Call this when updating the screen
 fun draw_logo () {
-    logo.sprite.SetX (logo.x);
-    logo.sprite.SetY (logo.y);
-    logo.sprite.SetZ (logo.z);
-    logo.sprite.SetOpacity (1);
+	recalc_logo();
+	logo.sprite.SetOpacity (1);
 }
 
 fun ImageToText (text) {
