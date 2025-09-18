@@ -5,7 +5,9 @@
 " Encoding
 set enc=utf-8
 set fenc=utf-8
-set termencoding=utf-8
+if exists('&termencoding')
+  set termencoding=utf-8
+endif
 
 set nocompatible
 
@@ -34,3 +36,33 @@ if &term =~ 'xterm' || &term =~ 'tmux'
   imap <Esc>[1;5D <C-Left>
   imap <Esc>[1;5C <C-Right>
 endif
+
+function! NorminetteCheck() abort
+  " Exécute norminette sur le fichier courant
+  let l:out = systemlist('norminette ' . expand('%'))
+
+  " Prépare la liste quickfix
+  let l:qf = []
+  for l:line in l:out
+    call add(l:qf, {
+          \ 'filename': expand('%'),
+          \ 'lnum': 1,
+          \ 'col': 1,
+          \ 'text': l:line,
+          \ 'type': 'E'
+          \ })
+  endfor
+
+  " Remplace le contenu du quickfix par notre liste
+  call setqflist(l:qf, 'r')
+
+  " Ouvre la quickfix window si erreurs
+  if len(l:qf) > 0
+    copen
+  else
+    cclose | echo "Norminette OK"
+  endif
+endfunction
+
+nnoremap <leader>n :call NorminetteCheck()<CR>
+
