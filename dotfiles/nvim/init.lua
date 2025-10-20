@@ -2,6 +2,27 @@
 
 require("config.lazy")
 
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  callback = function()
+    -- Active le truecolor (obligatoire pour les thèmes modernes)
+    vim.opt.termguicolors = true
+    vim.opt.background = "dark"
+
+    -- Applique le thème Catppuccin (doit être installé via Lazy)
+    pcall(vim.cmd, "colorscheme catppuccin")
+	vim.cmd("hi Normal guibg=#1a1a1a")
+
+    -- Treesitter : coloration activée
+    pcall(function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python", "json", "bash", "yaml", "markdown" },
+        highlight = { enable = true, additional_vim_regex_highlighting = false },
+      })
+    end)
+  end,
+})
+
 -- Encoding
 vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
@@ -15,10 +36,6 @@ vim.opt.cindent = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.textwidth = 120
-
--- Syntaxe / colors
-vim.cmd("syntax on")
-vim.opt.comments = "sl:/*,mb:\\ *,elx:\\ *"
 
 -- Numerotation
 vim.opt.number = true
@@ -129,3 +146,19 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 	pattern = { "*.c", "*.h" },
 	callback = function(args) NorminetteCheck() end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "c", "cpp" },
+  callback = function()
+    if vim.bo.modifiable then
+      vim.opt_local.comments = "sl:/*,mb:\\ *,elx:\\ *"
+    end
+  end,
+})
+
+-- == Telescope settings == --
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
