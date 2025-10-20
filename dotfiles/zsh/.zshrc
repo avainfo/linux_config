@@ -16,14 +16,38 @@ alias ls='ls --color=auto'
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+
 typeset -U path
 
 path=(
-	$HOME/.config/kitty.app/bin
-	$HOME/bin
-	$HOME/srcs/flutter/bin
-	$path
+  $HOME/.config/kitty.app/bin
+  $HOME/bin
+  $HOME/bin/jetbrains
+  $HOME/srcs/flutter/bin
+  $HOME/srcs/cmdline-tools/bin
+  $HOME/.pub-cache/bin
+  $HOME/.local/bin
+  $path
 )
+
+# QT6 Paths
+# Qt 6.9.2 base path
+export QT_BASE="$HOME/Qt/6.9.2/gcc_64"
+
+# Pour que CMake trouve Qt
+export CMAKE_PREFIX_PATH="$QT_BASE/lib/cmake${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+# Pour avoir les binaires Qt (qmake, qt-cmake, moc, rcc, qml, etc.)
+export PATH="$QT_BASE/bin:$PATH"
+
+# Pour que ton appli trouve les .so Qt
+export LD_LIBRARY_PATH="$QT_BASE/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+# Pour que Qt charge ses plugins (plateformes, imageformats, etc.)
+export QT_PLUGIN_PATH="$QT_BASE/plugins${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+
+# Pour les imports QML (Qt Quick)
+export QML2_IMPORT_PATH="$QT_BASE/qml${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
@@ -131,6 +155,35 @@ c() {
     cc -Wall -Wextra -Werror "$@" && ./a.out && rm -f a.out
 }
 
+val() {
+    cc -Wall -Wextra -Werror "$@" && valgrind ./a.out && rm -f a.out
+}
+
+check() {
+	norminette "$@"
+}
+
+cpi() {
+    g++ -o main "$1" && ./main < input && rm -f main
+}
+
+studio() {
+	local target="${1:-.}"
+
+	if command -v realpath >/dev/null 2>&1; then
+		target="$(realpath -m -- "$target")"
+	else
+		target="$(python3 - <<'PY' "$target"
+import os, sys
+print(os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else '.'))
+PY
+)"
+	fi
+
+	"/home/ava/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio" "$target" >/dev/null 2>&1 &
+	disown
+}
+
 alias gs="git status"
 
 if [ -z "$KITTY_WINDOW_ID" ]; then
@@ -142,3 +195,5 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 alias ls='ls --color=auto'
+alias rm="rm -i"
+alias vim="nvim"
