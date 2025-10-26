@@ -167,6 +167,14 @@ cpi() {
     g++ -o main "$1" && ./main < input && rm -f main
 }
 
+mf() {
+	varname=$1
+	shift
+	echo -n "$varname = " >> Makefile
+	ls "$@" | sed ':a;N;$!ba;s/\n/ \\\n\t/g' >> Makefile
+	echo >> Makefile
+}
+
 studio() {
 	local target="${1:-.}"
 
@@ -184,7 +192,11 @@ PY
 	disown
 }
 
-alias gs="git status"
+if [ -z "$TMUX" ]; then
+	alias t="tmux"
+else
+	alias t="echo 'Déjà dans une session tmux'"
+fi
 
 if [ -z "$KITTY_WINDOW_ID" ]; then
 	alias k="kitty --detach && exit"
@@ -197,3 +209,10 @@ fi
 alias ls='ls --color=auto'
 alias rm="rm -i"
 alias vim="nvim"
+alias gs="git status"
+
+DISABLE_AUTO_TITLE="true"
+
+alias francinette=/home/ava/francinette/tester.sh
+
+alias paco=/home/ava/francinette/tester.sh
