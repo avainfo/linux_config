@@ -13,6 +13,14 @@ link() {
     echo "🔗 Linked $target -> $source"
 }
 
+# Fonts (JetBrains Mono Nerd Font)
+echo "abc Installing JetBrains Mono Nerd Font..."
+if command -v brew >/dev/null 2>&1; then
+    brew install --cask font-jetbrains-mono-nerd-font || echo "⚠️  Could not install font via brew (maybe already installed?)"
+else
+    echo "⚠️  Homebrew not found. Skipping font installation."
+fi
+
 # Zsh & p10k
 link "$ROOT/zsh/.zshrc"              "$HOME/.zshrc"
 echo "ℹ️  Remember to install fonts for p10k if needed."
