@@ -1,6 +1,6 @@
 -- === Ava Info — Neovim init.lua ===
 
--- Désactive les providers non utilisés (réduit warnings)
+-- Désactive les providers non utilisés (réduit warnings et améliore perf)
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
@@ -10,12 +10,15 @@ require("config.lazy")
 vim.api.nvim_create_autocmd("User", {
   pattern = "VeryLazy",
   callback = function()
+    -- Active le truecolor (obligatoire pour les thèmes modernes)
     vim.opt.termguicolors = true
     vim.opt.background = "dark"
 
+    -- Applique le thème Catppuccin (doit être installé via Lazy)
     pcall(vim.cmd, "colorscheme catppuccin")
-    vim.cmd("hi Normal guibg=#1a1a1a")
+	vim.cmd("hi Normal guibg=#1a1a1a")
 
+    -- Treesitter : coloration activée
     pcall(function()
       require("nvim-treesitter.configs").setup({
         ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python", "json", "bash", "yaml", "markdown" },
@@ -29,13 +32,13 @@ vim.api.nvim_create_autocmd("User", {
 vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 
--- Indentation (TABS réels)
-vim.opt.expandtab = false      -- Tabs au lieu d'espaces
+-- Indentation (TABS réels, pas espaces)
 vim.opt.smartindent = true
 vim.opt.cindent = true
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.expandtab = false      -- Utilise des TABS réels au lieu d'espaces
+vim.opt.tabstop = 4            -- Les tabs s'affichent comme 4 colonnes
+vim.opt.shiftwidth = 4         -- Indentation automatique = 4 colonnes
+vim.opt.softtabstop = 4        -- Backspace supprime 4 colonnes
 vim.opt.textwidth = 120
 
 -- Numerotation
@@ -54,6 +57,9 @@ vim.keymap.set("i", "<C-Right>", "<C-o>w", { noremap = true })
 -- =========================
 -- Norminette (Native Diagnostics)
 -- =========================
+-- This function runs "norminette" on the current buffer and displays errors
+-- directly in Neovim's diagnostic system (underlines, virtual text, floating messages)
+-- It does not open the quickfix list
 local ns = vim.api.nvim_create_namespace("norminette")
 
 local function NorminetteCheck()
@@ -154,4 +160,5 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Telescope keymaps sont dans lua/plugins/telescope.lua
+-- == Telescope settings == --
+-- Déplacé dans lua/plugins/telescope.lua pour éviter erreur de chargement
