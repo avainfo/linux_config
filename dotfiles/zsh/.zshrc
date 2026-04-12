@@ -225,3 +225,8 @@ alias paco=/home/ava/francinette/tester.sh
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Competitive Programming
+alias cpnew='() { mkdir -p ~/cp/$1 && cp ~/.config/nvim/templates/cp.cpp ~/cp/$1/main.cpp && touch ~/cp/$1/input.txt && cd ~/cp/$1 && nvim main.cpp }'
+alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out'
+alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
