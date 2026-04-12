@@ -1,0 +1,10 @@
+Hover:
+  ShowAKA: Yes
+Diagnostics:
+  UnusedIncludes: Strict
+CompileFlags:
+  Add:
+    - "-std=c++20"
+    - "-O2"
+    - "-Wall"
+    - "-Wextra"
