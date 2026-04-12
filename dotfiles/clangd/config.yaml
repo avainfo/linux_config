@@ -2,6 +2,9 @@ Hover:
   ShowAKA: Yes
 Diagnostics:
   UnusedIncludes: Strict
+
+If:
+  PathMatch: ".*\\.cpp$"
 CompileFlags:
   Add:
     - "-std=c++20"

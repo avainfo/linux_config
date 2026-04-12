@@ -67,7 +67,7 @@ return {
       -- Check Neovim version
       local nvim_version = vim.version()
       local use_new_api = nvim_version.major > 0 or (nvim_version.major == 0 and nvim_version.minor >= 11)
-      
+
       local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
       -- Capabilities : Annonce à LSP qu'on supporte snippets + autocomplete
@@ -119,7 +119,7 @@ return {
             "--clang-tidy",
             "--completion-style=detailed",
             "--header-insertion=iwyu",
-            "--function-arg-placeholders",
+            "--function-arg-placeholders=1",
           },
         })
 
