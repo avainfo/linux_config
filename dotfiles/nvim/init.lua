@@ -1,6 +1,5 @@
 -- === Ava Info — Neovim init.lua ===
 
--- Désactive les providers non utilisés (réduit warnings)
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
@@ -29,8 +28,8 @@ vim.api.nvim_create_autocmd("User", {
 vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 
--- Indentation (TABS réels)
-vim.opt.expandtab = false      -- Tabs au lieu d'espaces
+-- Indentation (TABS)
+vim.opt.expandtab = false
 vim.opt.smartindent = true
 vim.opt.cindent = true
 vim.opt.tabstop = 4
@@ -154,4 +153,27 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Telescope keymaps sont dans lua/plugins/telescope.lua
+-- Telescope keymaps are in lua/plugins/telescope.lua
+
+-- =========================
+-- Competitive Programming
+-- =========================
+local cp = require("ava.cp")
+
+-- <F5> : compile + interactive run
+vim.keymap.set("n", "<F5>", cp.run, { desc = "CP: compile & run" })
+
+-- <F6> : compile + run with input.txt
+vim.keymap.set("n", "<F6>", cp.run_with_input, { desc = "CP: run with input.txt" })
+
+-- <F7> : only compile (errors check)
+vim.keymap.set("n", "<F7>", cp.build, { desc = "CP: build only" })
+
+-- <F8> : open/create input.txt in vsplit
+vim.keymap.set("n", "<F8>", cp.open_input, { desc = "CP: open input.txt" })
+
+-- <Space>ct : load cp template in an empty buffer .cpp
+vim.keymap.set("n", "<Space>ct", cp.load_template, { desc = "CP: load template" })
+
+-- Quit terminal with Escape
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: normal mode" })
