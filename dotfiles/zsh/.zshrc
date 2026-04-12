@@ -227,6 +227,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Competitive Programming
-alias cpnew='() { mkdir -p ~/cp/$1 && cp ~/.config/nvim/templates/cp.cpp ~/cp/$1/main.cpp && touch ~/cp/$1/input.txt && cd ~/cp/$1 && nvim main.cpp }'
+cpnew() {
+    local dest="$PWD/$1"
+    mkdir -p "$dest" || return 1
+    [[ ! -f "$dest/main.cpp" ]] && cp ~/.config/nvim/templates/cp.cpp "$dest/main.cpp"
+    [[ ! -f "$dest/input.txt" ]] && touch "$dest/input.txt"
+    cd "$dest" && nvim main.cpp
+}
 alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out'
 alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
