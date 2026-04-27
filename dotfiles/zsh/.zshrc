@@ -166,6 +166,17 @@ check() {
 	norminette "$@"
 }
 
+checkp() {
+    echo "[1/3] py_compile..."
+    python3 -m py_compile "$@" || return 1
+
+    echo "[2/3] flake8..."
+    python3 -m flake8 "$@" || return 1
+
+    echo "[3/3] mypy --strict..."
+    python3 -m mypy --strict "$@" || return 1
+}
+
 cpi() {
     g++ -o main "$1" && ./main < input && rm -f main
 }
@@ -222,10 +233,6 @@ alias francinette=/home/ava/francinette/tester.sh
 
 alias paco=/home/ava/francinette/tester.sh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 # Competitive Programming
 cpnew() {
     local dest="$PWD/$1"
@@ -236,3 +243,7 @@ cpnew() {
 }
 alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out'
 alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
