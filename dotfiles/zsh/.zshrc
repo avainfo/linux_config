@@ -253,6 +253,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Source optional local configurations if they exist
-for conf in ~/.config/ava/*.zsh; do
-    [ -f "$conf" ] && source "$conf"
-done
+if [ -d "$HOME/.config/ava" ]; then
+    for conf in "$HOME"/.config/ava/*.zsh(N); do
+        source "$conf"
+    done
+fi

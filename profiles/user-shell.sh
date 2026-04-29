@@ -11,6 +11,11 @@ if [[ $DRY_RUN -eq 1 ]]; then
     exit 0
 fi
 
+if ! command -v git >/dev/null 2>&1; then
+    echo " [WARNING] git not found. Skipping Oh My Zsh and plugin setup."
+    exit 0
+fi
+
 echo ">> Preparing User Shell (Oh My Zsh & Plugins)..."
 
 # Oh My Zsh

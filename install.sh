@@ -122,7 +122,7 @@ echo ""
 echo "======================================"
 echo " Installation Summary"
 echo "======================================"
-if [[ -f "/tmp/ava_install_summary.env" ]]; then
+if [[ $DRY_RUN -eq 0 && -f "/tmp/ava_install_summary.env" ]]; then
     source "/tmp/ava_install_summary.env"
     rm -f "/tmp/ava_install_summary.env"
 fi
