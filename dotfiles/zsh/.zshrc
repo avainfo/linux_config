@@ -1,5 +1,7 @@
-figlet -f standard "Welcome"
-figlet -f standard "MR. DO SOUTO"
+if command -v figlet >/dev/null 2>&1; then
+    figlet -f standard "Welcome"
+    figlet -f standard "MR. DO SOUTO"
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -115,7 +117,11 @@ plugins=(
             zsh-syntax-highlighting
         )
 
-source $ZSH/oh-my-zsh.sh
+if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+    source "$ZSH/oh-my-zsh.sh"
+else
+    echo "Warning: Oh My Zsh not found at $ZSH"
+fi
 
 # User configuration
 
@@ -214,7 +220,9 @@ else
 fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+if [[ -f ~/.p10k.zsh ]]; then
+    source ~/.p10k.zsh
+fi
 alias ls='ls --color=auto'
 alias rm="rm -i"
 alias vim="nvim"

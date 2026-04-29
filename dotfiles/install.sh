@@ -60,6 +60,11 @@ install_link() {
         echo " [!] Conflict found: $target_path"
         if [[ ! -t 0 ]]; then
             echo "   -> Non-interactive mode. Skipping file."
+            echo "Conflict:"
+            echo "  existing: $target_path"
+            echo "  repo: $source_path"
+            echo "Run:"
+            echo "  diff -u $target_path $source_path"
             SUM_DOT_CONFLICTS=$((SUM_DOT_CONFLICTS + 1))
             return
         fi
@@ -148,11 +153,13 @@ if [[ -d "$ROOT/../scripts" ]]; then
     done
 fi
 
-cat <<EOF > /tmp/ava_install_summary.env
+if [[ $DRY_RUN -eq 0 ]]; then
+    cat <<EOF > /tmp/ava_install_summary.env
 export SUM_DOT_INSTALLED=$SUM_DOT_INSTALLED
 export SUM_DOT_SKIPPED=$SUM_DOT_SKIPPED
 export SUM_DOT_CONFLICTS=$SUM_DOT_CONFLICTS
 export SUM_BACKUPS=$SUM_BACKUPS
 EOF
+fi
 
 echo "Dotfiles installed."

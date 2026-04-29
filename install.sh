@@ -112,6 +112,8 @@ fi
 
 # 4. Dotfiles & User Config
 if [[ $MODE_USER_ONLY -eq 1 ]]; then
+    echo ">> Preparing user shell..."
+    bash "$ROOT/profiles/user-shell.sh"
     echo ">> Installing dotfiles..."
     bash "$ROOT/dotfiles/install.sh"
 fi
