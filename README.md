@@ -16,15 +16,31 @@ cd ~/.dotfiles
 
 ### 2. Choose your installation mode
 
-**Dry-Run (Safe Preview)**
+> [!TIP]
+> If you are installing on an existing machine, it is highly recommended to run a dry-run first to preview changes without modifying anything.
+
+**Dry-Runs (Safe Previews)**
 ```bash
-bash install.sh --dry-run
+bash install.sh --full --dry-run
+bash install.sh --user-only --dry-run
 ```
 
 **Full Workstation Install (Requires sudo)**
 Installs packages, system configurations, and user dotfiles.
 ```bash
 bash install.sh --full
+```
+
+**System-Only Install (Requires sudo)**
+Only installs apt packages and system configurations.
+```bash
+bash install.sh --system-only
+```
+
+**Full Install without System Configs**
+Installs packages and dotfiles, but leaves system files (like journald and sysctl) alone.
+```bash
+bash install.sh --full --no-system
 ```
 
 **Full Install + Docker (Requires sudo)**
@@ -40,7 +56,7 @@ bash install.sh --user-only
 
 ## What Gets Installed
 
-- **Zsh & Oh My Zsh**: Powerlevel10k prompt + plugins (`autosuggestions`, `syntax-highlighting`).
+- **Zsh & Oh My Zsh**: The user shell profile automatically downloads Oh My Zsh, Powerlevel10k prompt, and plugins (`autosuggestions`, `syntax-highlighting`) if they are missing. Note: `chsh` is **not** run automatically.
 - **Development Tools**: C/C++ compilers, CMake, Ninja, GDB, LLDB, Bear, Cppcheck.
 - **Diagnostics Tools**: Valgrind, strace, ltrace, systemd-coredump, stress-ng, perf.
 - **Desktop Utilities**: Kitty terminal, fonts, clipboard tools.

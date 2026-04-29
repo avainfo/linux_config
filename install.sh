@@ -112,6 +112,8 @@ fi
 
 # 4. Dotfiles & User Config
 if [[ $MODE_USER_ONLY -eq 1 ]]; then
+    echo ">> Preparing user shell..."
+    bash "$ROOT/profiles/user-shell.sh"
     echo ">> Installing dotfiles..."
     bash "$ROOT/dotfiles/install.sh"
 fi
@@ -120,7 +122,7 @@ echo ""
 echo "======================================"
 echo " Installation Summary"
 echo "======================================"
-if [[ -f "/tmp/ava_install_summary.env" ]]; then
+if [[ $DRY_RUN -eq 0 && -f "/tmp/ava_install_summary.env" ]]; then
     source "/tmp/ava_install_summary.env"
     rm -f "/tmp/ava_install_summary.env"
 fi

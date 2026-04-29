@@ -24,4 +24,4 @@ sudo apt-get install -y git curl wget unzip zip ca-certificates gnupg lsb-releas
     software-properties-common build-essential pkg-config jq tree htop \
     ripgrep fd-find fzf tmux zsh neovim python3 python3-pip python3-venv rsync
 
-install_if_available btop
+install_if_available btop figlet
