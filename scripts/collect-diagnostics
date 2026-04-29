@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ $# -lt 1 ]]; then
+    echo "Usage: collect-diagnostics <service-name>"
+    exit 1
+fi
+SERVICE="$1"
+DIR="./diagnostics/$(date +%Y%m%d_%H%M%S)_$SERVICE"
+mkdir -p "$DIR"
+systemctl status "$SERVICE" > "$DIR/status.log" 2>&1 || true
+journalctl -u "$SERVICE" -n 500 > "$DIR/recent.log" 2>&1 || true
+journalctl -u "$SERVICE" -p err -S "-24h" > "$DIR/errors.log" 2>&1 || true
+uname -a > "$DIR/uname.log" || true
+uptime > "$DIR/uptime.log" || true
+free -h > "$DIR/memory.log" || true
+df -h > "$DIR/disk.log" || true
+ps auxf > "$DIR/process.log" || true
+echo "Saved diagnostics to $DIR"

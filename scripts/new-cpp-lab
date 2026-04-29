@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ $# -lt 1 ]]; then
+    echo "Usage: new-cpp-lab <project-name>"
+    exit 1
+fi
+DIR="$1"
+if [[ -d "$DIR" ]]; then
+    echo "Directory $DIR already exists."
+    exit 1
+fi
+mkdir -p "$DIR/src"
+cat <<EOF > "$DIR/CMakeLists.txt"
+cmake_minimum_required(VERSION 3.16)
+project(${DIR} VERSION 1.0)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion)
+add_executable(${DIR} src/main.cpp)
+EOF
+cat <<EOF > "$DIR/src/main.cpp"
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, ${DIR}!" << std::endl;
+    return 0;
+}
+EOF
+echo "Created C++ lab in $DIR"

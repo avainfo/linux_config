@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ $# -lt 1 ]]; then
+    echo "Usage: debug-service <service-name>"
+    exit 1
+fi
+SERVICE="$1"
+echo "=== Systemctl Status ==="
+systemctl status "$SERVICE" || true
+echo ""
+echo "=== Recent Logs ==="
+journalctl -u "$SERVICE" -n 50 --no-pager || true
+echo ""
+echo "=== Error Logs (Last 24h) ==="
+journalctl -u "$SERVICE" -p err -S "-24h" --no-pager || true

@@ -1,1 +1,8 @@
 dotfiles/nvim/lazy-lock.json
+
+diagnostics/
+traces/
+*.log
+*.core
+core
+core.*

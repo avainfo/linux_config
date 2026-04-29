@@ -34,23 +34,14 @@ path=(
 )
 
 # QT6 Paths
-# Qt 6.9.2 base path
-export QT_BASE="$HOME/Qt/6.9.2/gcc_64"
-
-# Pour que CMake trouve Qt
-export CMAKE_PREFIX_PATH="$QT_BASE/lib/cmake${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
-
-# Pour avoir les binaires Qt (qmake, qt-cmake, moc, rcc, qml, etc.)
-export PATH="$QT_BASE/bin:$PATH"
-
-# Pour que ton appli trouve les .so Qt
-export LD_LIBRARY_PATH="$QT_BASE/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-
-# Pour que Qt charge ses plugins (plateformes, imageformats, etc.)
-export QT_PLUGIN_PATH="$QT_BASE/plugins${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
-
-# Pour les imports QML (Qt Quick)
-export QML2_IMPORT_PATH="$QT_BASE/qml${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+if [ -d "$HOME/Qt/6.9.2/gcc_64" ]; then
+    export QT_BASE="$HOME/Qt/6.9.2/gcc_64"
+    export CMAKE_PREFIX_PATH="$QT_BASE/lib/cmake${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+    export PATH="$QT_BASE/bin:$PATH"
+    export LD_LIBRARY_PATH="$QT_BASE/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+    export QT_PLUGIN_PATH="$QT_BASE/plugins${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+    export QML2_IMPORT_PATH="$QT_BASE/qml${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+fi
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
@@ -202,8 +193,12 @@ PY
 )"
 	fi
 
-	"/home/ava/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio" "$target" >/dev/null 2>&1 &
-	disown
+	if [ -f "$HOME/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio" ]; then
+		"$HOME/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio" "$target" >/dev/null 2>&1 &
+		disown
+	else
+		echo "Android Studio not found."
+	fi
 }
 
 if [ -z "$TMUX" ]; then
@@ -229,9 +224,10 @@ alias rpy="rm -rf __pycache__"
 
 DISABLE_AUTO_TITLE="true"
 
-alias francinette=/home/ava/francinette/tester.sh
-
-alias paco=/home/ava/francinette/tester.sh
+if [ -f "$HOME/francinette/tester.sh" ]; then
+    alias francinette="$HOME/francinette/tester.sh"
+    alias paco="$HOME/francinette/tester.sh"
+fi
 
 # Competitive Programming
 cpnew() {
@@ -247,3 +243,8 @@ alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Source optional local configurations if they exist
+for conf in ~/.config/ava/*.zsh; do
+    [ -f "$conf" ] && source "$conf"
+done

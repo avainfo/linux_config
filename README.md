@@ -1,104 +1,60 @@
-# 🛠️ Dotfiles – Ava Setup
+# 🛠️ Dotfiles – Ava Workstation Setup
 
-Personal configuration for a productive, portable, and visually appealing development environment.  
-Works on any machine with user-space installation (no root required).  
+A reproducible Linux workstation bootstrap for Pop!_OS, Ubuntu, and Debian-based systems. It transforms a fresh machine into a capable C/C++ and embedded Linux development environment.
 
-Currently using:
-- **Powerlevel10k** for the prompt (with plans to switch to a fully custom Zsh theme)
-- **Afterglow** theme for Kitty
-- **JetBrainsMono Nerd Font** for better glyph support and programming ligatures
+## Supported Systems
+- **Pop!_OS 22.04+**
+- **Ubuntu & Debian-based Linux systems**
 
----
-
-## 📂 Contents
-
-- **Zsh + Oh My Zsh** → Powerlevel10k prompt + plugins (`autosuggestions`, `syntax-highlighting`)
-- **Tmux** → pane splits, status bar, and Truecolor support with Kitty
-- **Vim** → minimal setup for C and Python development
-- **Git** → aliases and colorized configuration
-- **Kitty** → Afterglow theme + JetBrainsMono Nerd Font
-- **EditorConfig** → consistent indentation and style
-- **Clang-format** → C/C++ code formatting rules
-- **GDB** → clean and readable debugging output
-- **Custom scripts in `bin/`** → helpers for building, running, valgrind, etc.
-- **Custom Zsh Theme (planned)** → multi-line prompt with full Git status (↑ ahead, ↓ behind, ✚ modified, ✔ staged, ⚠ conflicts)
-- **Kitty Themes (planned)** → multiple variants (`ava-dark`, `ava-blue`, `ava-graphite`)
-
----
-
-## 🚀 Installation
+## Installation
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/avainfo/linux_config/ ~/.dotfiles
+git clone https://github.com/avainfo/linux_config ~/.dotfiles
+cd ~/.dotfiles
 ```
 
-### 2. Run the installation script
+### 2. Choose your installation mode
 
+**Dry-Run (Safe Preview)**
 ```bash
-~/.dotfiles/install.sh
+bash install.sh --dry-run
 ```
 
-The script will:
-
-* Create required directories (`~/.config/kitty`, `~/bin`, etc.)
-* Symlink configuration files into `$HOME`
-* Copy scripts into `~/bin`
-
----
-
-## 🎨 Kitty Themes
-
-Default setup uses the **Afterglow** theme with **JetBrainsMono Nerd Font**.
-Additional themes are stored in `kitty/themes/`.
-To change the theme, edit the `include` line at the top of `kitty.conf`:
-
-```conf
-include ~/.config/kitty/themes/ava-dark.conf
+**Full Workstation Install (Requires sudo)**
+Installs packages, system configurations, and user dotfiles.
+```bash
+bash install.sh --full
 ```
 
-Available options:
-
-* `ava-dark` → balanced dark theme
-* `ava-blue` → deep night background with blue accents
-* `ava-graphite` → high-contrast, highly readable theme
-
----
-
-## 📦 Repository Structure
-
-```
-dotfiles/
-  install.sh
-  zsh/.zshrc
-  zsh/.p10k.zsh
-  tmux/.tmux.conf
-  vim/.vimrc
-  git/.gitconfig
-  kitty/kitty.conf
-  kitty/themes/*.conf
-  editor/.editorconfig
-  clang/.clang-format
-  debug/.gdbinit
-  bin/...
+**Full Install + Docker (Requires sudo)**
+```bash
+bash install.sh --full --docker
 ```
 
----
-
-## ✨ Preview
-
-Example Powerlevel10k prompt (current setup):
-
-```
-╭─ ~/Documents/config/dotfiles master ?1 ─── 00:32:41 ─╮
-╰─❯                                                   ─╯
+**User-Only Install (No sudo required)**
+Only links dotfiles and user scripts to your home directory. Safe for shared servers.
+```bash
+bash install.sh --user-only
 ```
 
-Kitty running the **Afterglow** theme with **JetBrainsMono Nerd Font**,
-Tmux with a clean bottom bar, and accurate colors in Vim and Zsh.
+## What Gets Installed
 
----
+- **Zsh & Oh My Zsh**: Powerlevel10k prompt + plugins (`autosuggestions`, `syntax-highlighting`).
+- **Development Tools**: C/C++ compilers, CMake, Ninja, GDB, LLDB, Bear, Cppcheck.
+- **Diagnostics Tools**: Valgrind, strace, ltrace, systemd-coredump, stress-ng, perf.
+- **Desktop Utilities**: Kitty terminal, fonts, clipboard tools.
+- **Custom Scripts**: Found in `scripts/`, including `analyze-core`, `debug-service`, and `collect-diagnostics`.
 
-## 📜 License
+## Safety Model
 
-Free to use and modify.
+- **Safe Upgrades**: The dotfiles installer will interactively prompt you if a local config file conflicts with the repository. It uses `cmp` and `diff` to show you exactly what changed.
+- **Drop-in Configs**: System configurations (like `coredump.conf` and `journald.conf`) are safely placed in drop-in directories (`*.conf.d/`) rather than overwriting main OS files.
+- **Backups**: If you choose to replace an existing config, a backup is safely stored in `~/.config/ava/backups/`.
+
+## Documentation
+
+Check the `docs/` folder for more details:
+- [Workstation Philosophy](docs/workstation.md)
+- [How to Restore Backups](docs/restore.md)
+- [Crash Analysis Workflow](docs/crash-analysis-workflow.md)
