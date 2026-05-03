@@ -248,6 +248,36 @@ cpnew() {
 alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out'
 alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
 
+# Sync GMK87 keyboard clock
+rlkeyboard() {
+    local repo="$HOME/Downloads/gmk87-node"
+
+    if [ ! -d "$repo" ]; then
+        echo "GMK87 repo not found: $repo"
+        return 1
+    fi
+
+    # Load nvm if available
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+
+    if ! command -v node >/dev/null 2>&1; then
+        echo "Node.js not found. Install/use Node LTS first."
+        return 1
+    fi
+
+    echo "Node: $(node -v)"
+    echo "Syncing GMK87 keyboard time..."
+
+    cd "$repo" || return 1
+
+    if [ "$1" = "--sudo" ] || [ "$1" = "-s" ]; then
+        sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
+    else
+        npm run timesync
+    fi
+}
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
