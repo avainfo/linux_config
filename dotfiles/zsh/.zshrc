@@ -271,10 +271,7 @@ rlkeyboard() {
 
     cd "$repo" || return 1
 
-    if [ "$1" = "--sudo" ] || [ "$1" = "-s" ]; then
-        sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
-    else
-        npm run timesync
+	sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
     fi
 }
 
