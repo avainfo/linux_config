@@ -272,7 +272,6 @@ rlkeyboard() {
     cd "$repo" || return 1
 
 	sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
-    fi
 }
 
 export NVM_DIR="$HOME/.nvm"
