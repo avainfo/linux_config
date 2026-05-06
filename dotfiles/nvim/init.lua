@@ -25,7 +25,8 @@ vim.api.nvim_create_autocmd("User", {
 })
 
 -- Time Neovim waits for mapped key sequences
-vim.opt.timeout = false
+vim.opt.timeout = true
+vim.opt.timeoutlen = 10000
 
 -- Encoding
 vim.opt.encoding = "utf-8"
