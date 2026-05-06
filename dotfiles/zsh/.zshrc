@@ -274,6 +274,8 @@ rlkeyboard() {
 	sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
 }
 
+alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
