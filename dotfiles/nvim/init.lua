@@ -125,7 +125,7 @@ local function NorminetteCheck()
 end
 
 -- Load the 42 header module
-require("ava.header42").setup({
+require("ava.header").setup({
 	user = "ando-sou",
 	mail = "ando-sou@student.42porto.com",
 })
@@ -134,9 +134,29 @@ vim.keymap.set("n", "<Space>n", function()
 	vim.cmd("write")
 end, { desc = "Save and run norminette (via autocmd)" })
 
-vim.keymap.set("n", "<F1>", function()
-	require("ava.header42").stdheader()
-end, { silent = true, desc = "42 Stdheader" })
+-- License/header shortcuts.
+-- Press F1 followed by a letter to insert the matching file header:
+--   F1 + f: 42 stdheader
+--   F1 + m: MIT license header
+--   F1 + a: Apache 2.0 license header
+--   F1 + p: proprietary/private header
+local headers = require("ava.header")
+
+vim.keymap.set("n", "<F1>f", function()
+	headers.stdheader()
+end, { silent = true, desc = "Header: 42 stdheader" })
+
+vim.keymap.set("n", "<F1>m", function()
+	headers.mit_header()
+end, { silent = true, desc = "Header: MIT" })
+
+vim.keymap.set("n", "<F1>a", function()
+	headers.apache_header()
+end, { silent = true, desc = "Header: Apache 2.0" })
+
+vim.keymap.set("n", "<F1>p", function()
+	headers.private_header()
+end, { silent = true, desc = "Header: proprietary/private" })
 
 -- Map Space+s to open diagnostics float
 vim.keymap.set("n", "<Space>s", function()

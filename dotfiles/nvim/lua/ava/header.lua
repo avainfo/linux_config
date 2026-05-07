@@ -183,6 +183,72 @@ function M.fix_merge_conflict()
   end
 end
 
+local function insert_plain_header(lines)
+	pick_filetype_tokens()
+
+	local bufnr = 0
+	local start_token = str(M.start)
+	local end_token = str(M._end)
+
+	local out = {}
+
+	local is_c_style = start_token == "/*" and end_token == "*/"
+
+	if is_c_style then
+		table.insert(out, "/*")
+		for _, l in ipairs(lines) do
+			if l == "" then
+				table.insert(out, " *")
+			else
+				table.insert(out, " * " .. l)
+			end
+		end
+		table.insert(out, " */")
+	else
+		for _, l in ipairs(lines) do
+			if l == "" then
+				table.insert(out, start_token)
+			else
+				table.insert(out, start_token .. " " .. l)
+			end
+		end
+	end
+
+	table.insert(out, "")
+	vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, out)
+end
+
+function M.mit_header()
+	insert_plain_header({
+		"Copyright (c) 2026 Antonin Do Souto",
+		"",
+		"SPDX-License-Identifier: MIT",
+	})
+end
+
+function M.apache_header()
+	insert_plain_header({
+		"Copyright (c) 2026 Antonin Do Souto",
+		"",
+		"SPDX-License-Identifier: Apache-2.0",
+	})
+end
+
+function M.private_header()
+	insert_plain_header({
+		"Proprietary / Commercial License",
+		"",
+		"Copyright (c) 2026 Antonin Do Souto",
+		"",
+		"All rights reserved.",
+		"",
+		"This repository contains proprietary software and documentation.",
+		"Unless explicitly stated otherwise in a subdirectory LICENSE file,",
+		"all files in this repository are proprietary and may not be copied,",
+		"modified, distributed, or used without prior written permission.",
+	})
+end
+
 -- Optional: create user command + autocmds from here
 function M.setup(opts)
   opts = opts or {}
