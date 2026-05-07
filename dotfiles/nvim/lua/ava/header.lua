@@ -192,9 +192,9 @@ local function insert_plain_header(lines)
 
 	local out = {}
 
-	local is_c_style = start_token == "/*" and end_token == "*/"
+	local is_block_comment = start_token ~= end_token
 
-	if is_c_style then
+	if start_token == "/*" and end_token == "*/" then
 		table.insert(out, "/*")
 		for _, l in ipairs(lines) do
 			if l == "" then
@@ -204,6 +204,16 @@ local function insert_plain_header(lines)
 			end
 		end
 		table.insert(out, " */")
+	elseif is_block_comment then
+		table.insert(out, start_token)
+		for _, l in ipairs(lines) do
+			if l == "" then
+				table.insert(out, "")
+			else
+				table.insert(out, " " .. l)
+			end
+		end
+		table.insert(out, end_token)
 	else
 		for _, l in ipairs(lines) do
 			if l == "" then
