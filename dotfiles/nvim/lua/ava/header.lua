@@ -230,6 +230,11 @@ end
 
 function M.mit_header()
 	insert_plain_header({
+		"Ava Info Conseils",
+		"",
+		"Author: Antonin Do Souto",
+		"Contact: antonindosouto@gmail.com",
+		"",
 		"Copyright (c) 2026 Antonin Do Souto",
 		"",
 		"SPDX-License-Identifier: MIT",
@@ -238,6 +243,11 @@ end
 
 function M.apache_header()
 	insert_plain_header({
+		"Ava Info Conseils",
+		"",
+		"Author: Antonin Do Souto",
+		"Contact: antonindosouto@gmail.com",
+		"",
 		"Copyright (c) 2026 Antonin Do Souto",
 		"",
 		"SPDX-License-Identifier: Apache-2.0",
@@ -246,6 +256,11 @@ end
 
 function M.private_header()
 	insert_plain_header({
+		"Ava Info Conseils",
+		"",
+		"Author: Antonin Do Souto",
+		"Contact: antonindosouto@gmail.com",
+		"",
 		"Proprietary / Commercial License",
 		"",
 		"Copyright (c) 2026 Antonin Do Souto",
