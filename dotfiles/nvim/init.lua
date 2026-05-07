@@ -124,7 +124,7 @@ local function NorminetteCheck()
 	})
 end
 
--- Load the 42 header module
+-- Load the header module
 require("ava.header").setup({
 	user = "ando-sou",
 	mail = "ando-sou@student.42porto.com",
