@@ -244,9 +244,11 @@ return {
 
       -- Keymap pour formater manuellement
 	vim.keymap.set("n", "<leader>fm", function()
-		local view = vim.fn.winsaveview()
-		vim.cmd("normal! gg=G")
-		vim.fn.winrestview(view)
+		require("conform").format({
+			lsp_fallback = true,
+			async = false,
+			timeout_ms = 1000,
+		})
 	end, { desc = "Reindent whole file without moving cursor" })
 	end,
   },
