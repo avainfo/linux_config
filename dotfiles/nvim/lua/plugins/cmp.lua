@@ -235,24 +235,20 @@ return {
           c = { "clang-format" },
           cpp = { "clang-format" },
         },
-        -- Format on save DÉSACTIVÉ
-        -- Tu peux formater manuellement avec <leader>fm
         -- format_on_save = {
-        --   lsp_fallback = true,
-        --   async = false,
-        --   timeout_ms = 1000,
-        -- },
+			-- lsp_fallback = true,
+			-- async = false,
+			-- timeout_ms = 1000,
+		-- },
       })
 
       -- Keymap pour formater manuellement
-      vim.keymap.set({ "n", "v" }, "<leader>fm", function()
-        conform.format({
-          lsp_fallback = true,
-          async = false,
-          timeout_ms = 1000,
-        })
-      end, { desc = "Format file or range (in visual mode)" })
-    end,
+	vim.keymap.set("n", "<leader>fm", function()
+		local view = vim.fn.winsaveview()
+		vim.cmd("normal! gg=G")
+		vim.fn.winrestview(view)
+	end, { desc = "Reindent whole file without moving cursor" })
+	end,
   },
 
   -- nvim-cmp : Moteur d'autocomplétion
