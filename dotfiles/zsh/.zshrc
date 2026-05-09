@@ -274,6 +274,21 @@ rlkeyboard() {
 	sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
 }
 
+# Create a local clang-format configuration using 4-column tab-based indentation
+clg() {
+	local target="${1:-.clang-format}"
+
+	cat > "$target" <<'EOF'
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+ColumnLimit: 120
+EOF
+
+	echo "clang-format config written to: $PWD/$target"
+}
+
 alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
 
 export NVM_DIR="$HOME/.nvm"
