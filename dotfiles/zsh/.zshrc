@@ -284,6 +284,7 @@ IndentWidth: 4
 TabWidth: 4
 UseTab: ForIndentation
 ColumnLimit: 120
+PointerAlignment: Left
 EOF
 
 	echo "clang-format config written to: $PWD/$target"
