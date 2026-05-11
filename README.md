@@ -1,6 +1,22 @@
-# 🛠️ Dotfiles – Ava Workstation Setup
+# Linux Debugging Workstation Setup
 
-A reproducible Linux workstation bootstrap for Pop!_OS, Ubuntu, and Debian-based systems. It transforms a fresh machine into a capable C/C++ and embedded Linux development environment.
+A reproducible Linux workstation bootstrap for Pop!_OS, Ubuntu, and Debian-based systems.
+
+It turns a fresh Linux machine into a C/C++ and embedded Linux development environment with debugging, crash analysis and system diagnostics tools.
+
+## Commercial Relevance
+
+This repository is primarily a personal engineering environment, but it documents the tools and workflows I use for Linux development, crash investigation and diagnostics.
+
+It supports my work in:
+
+- Linux developer training
+- C/C++ debugging training
+- embedded Linux support
+- reproducible development environments
+- diagnostics workflow setup
+
+See [COMMERCIAL.md](COMMERCIAL.md) for more details.
 
 ## Supported Systems
 - **Pop!_OS 22.04+**
