@@ -6,24 +6,54 @@ vim.g.loaded_ruby_provider = 0
 
 require("config.lazy")
 
-vim.api.nvim_create_autocmd("User", {
-  pattern = "VeryLazy",
-  callback = function()
-    vim.opt.termguicolors = true
-    vim.opt.background = "dark"
+-- =========================
+-- Vim Status Line
+-- =========================
 
-    pcall(vim.cmd, "colorscheme catppuccin")
-    vim.cmd("hi Normal guibg=#1a1a1a")
+local function SetStatuslineHighlights()
+	vim.api.nvim_set_hl(0, "NormStatusOn", {
+		fg = "#a6e3a1",
+		bold = true,
+	})
 
-    pcall(function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python", "json", "bash", "yaml", "markdown" },
-        highlight = { enable = true, additional_vim_regex_highlighting = false },
-      })
-    end)
-  end,
+	vim.api.nvim_set_hl(0, "NormStatusOff", {
+		fg = "#f38ba8",
+		bold = true,
+	})
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+	callback = SetStatuslineHighlights,
 })
 
+vim.opt.statusline = table.concat({
+	" %f",
+	"%m",
+	"%=",
+	"%{%v:lua.norminette_status()%}",
+	" %l,%c",
+	" %p%% ",
+})
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "VeryLazy",
+	callback = function()
+		vim.opt.termguicolors = true
+		vim.opt.background = "dark"
+
+		pcall(vim.cmd, "colorscheme catppuccin")
+		vim.cmd("hi Normal guibg=#1a1a1a")
+
+		SetStatuslineHighlights()
+
+		pcall(function()
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python", "json", "bash", "yaml", "markdown" },
+				highlight = { enable = true, additional_vim_regex_highlighting = false },
+			})
+		end)
+	end,
+})
 -- Time Neovim waits for mapped key sequences
 vim.opt.timeout = true
 vim.opt.timeoutlen = 10000
@@ -268,35 +298,4 @@ vim.keymap.set({ "n", "x" }, "y+", '"+y', {
 	noremap = true,
 	silent = true,
 	desc = "Yank to system clipboard",
-})
-
--- =========================
--- Vim Status Line
--- =========================
-
-local function SetStatuslineHighlights()
-	vim.api.nvim_set_hl(0, "NormStatusOn", {
-		fg = "#a6e3a1",
-		bold = true,
-	})
-
-	vim.api.nvim_set_hl(0, "NormStatusOff", {
-		fg = "#f38ba8",
-		bold = true,
-	})
-end
-
-SetStatuslineHighlights()
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-	callback = SetStatuslineHighlights,
-})
-
-vim.opt.statusline = table.concat({
-	" %f",
-	"%m",
-	"%=",
-	"%{%v:lua.norminette_status()%}",
-	" %l,%c",
-	" %p%% ",
 })
