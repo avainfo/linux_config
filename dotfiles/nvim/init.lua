@@ -59,6 +59,10 @@ vim.keymap.set("i", "<C-Right>", "<C-o>w", { noremap = true })
 -- =========================
 local ns = vim.api.nvim_create_namespace("norminette")
 
+local function RefreshStatusline()
+	vim.cmd("redrawstatus")
+end
+
 local function NorminetteCheck()
 	local bufnr = vim.api.nvim_get_current_buf()
 
@@ -166,21 +170,17 @@ vim.keymap.set("n", "<Space>nt", "<cmd>NormToggle<CR>", {
 })
 
 local function norminette_status()
-	local filetype = vim.bo.filetype
+	local name = vim.api.nvim_buf_get_name(0)
 
-	if filetype ~= "c" and filetype ~= "h" then
+	if not name:match("%.c$") and not name:match("%.h$") then
 		return ""
 	end
 
 	if vim.b.norminette_disabled then
-		return " Norm: off"
+		return " Norm: %#NormStatusOff#off%*"
 	end
 
-	return " Norm: on"
-end
-
-local function RefreshStatusline()
-	vim.cmd("redrawstatus")
+	return " Norm: %#NormStatusOn#on%*"
 end
 
 _G.norminette_status = norminette_status
@@ -267,11 +267,29 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: 
 -- Vim Status Line
 -- =========================
 
+local function SetStatuslineHighlights()
+	vim.api.nvim_set_hl(0, "NormStatusOn", {
+		fg = "#a6e3a1",
+		bold = true,
+	})
+
+	vim.api.nvim_set_hl(0, "NormStatusOff", {
+		fg = "#f38ba8",
+		bold = true,
+	})
+end
+
+SetStatuslineHighlights()
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+	callback = SetStatuslineHighlights,
+})
+
 vim.opt.statusline = table.concat({
 	" %f",
 	"%m",
 	"%=",
-	"%{v:lua.norminette_status()}",
+	"%{%v:lua.norminette_status()%}",
 	" %l,%c",
 	" %p%% ",
 })
