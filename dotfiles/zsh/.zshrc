@@ -428,6 +428,7 @@ EOF
 	git push -u "$remote" "$branch"
 }
 
+alias avainfo='~/Documents/Development/AvaInfo/'
 alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
 
 export NVM_DIR="$HOME/.nvm"
