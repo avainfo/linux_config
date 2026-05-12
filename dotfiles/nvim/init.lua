@@ -134,12 +134,14 @@ vim.api.nvim_create_user_command("NormOff", function()
 	local bufnr = vim.api.nvim_get_current_buf()
 	vim.b[bufnr].norminette_disabled = true
 	vim.diagnostic.reset(ns, bufnr)
+	RefreshStatusline()
 	vim.notify("Norminette disabled for this buffer", vim.log.levels.INFO)
 end, { desc = "Disable Norminette diagnostics for the current buffer" })
 
 vim.api.nvim_create_user_command("NormOn", function()
 	local bufnr = vim.api.nvim_get_current_buf()
 	vim.b[bufnr].norminette_disabled = false
+	RefreshStatusline()
 	vim.notify("Norminette enabled for this buffer", vim.log.levels.INFO)
 	NorminetteCheck()
 end, { desc = "Enable Norminette diagnostics for the current buffer" })
@@ -150,8 +152,10 @@ vim.api.nvim_create_user_command("NormToggle", function()
 
 	if vim.b[bufnr].norminette_disabled then
 		vim.diagnostic.reset(ns, bufnr)
+		RefreshStatusline()
 		vim.notify("Norminette disabled for this buffer", vim.log.levels.INFO)
 	else
+		RefreshStatusline()
 		vim.notify("Norminette enabled for this buffer", vim.log.levels.INFO)
 		NorminetteCheck()
 	end
@@ -173,6 +177,10 @@ local function norminette_status()
 	end
 
 	return " Norm: on"
+end
+
+local function RefreshStatusline()
+	vim.cmd("redrawstatus")
 end
 
 _G.norminette_status = norminette_status
