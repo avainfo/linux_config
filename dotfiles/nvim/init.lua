@@ -61,6 +61,12 @@ local ns = vim.api.nvim_create_namespace("norminette")
 
 local function NorminetteCheck()
 	local bufnr = vim.api.nvim_get_current_buf()
+
+	if vim.b[bufnr].norminette_disabled then
+		vim.diagnostic.reset(ns, bufnr)
+		return
+	end
+
 	local file = vim.api.nvim_buf_get_name(bufnr)
 	if file == "" then
 		vim.notify("No file to check.", vim.log.levels.WARN)
@@ -123,6 +129,53 @@ local function NorminetteCheck()
 		end,
 	})
 end
+
+vim.api.nvim_create_user_command("NormOff", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+	vim.b[bufnr].norminette_disabled = true
+	vim.diagnostic.reset(ns, bufnr)
+	vim.notify("Norminette disabled for this buffer", vim.log.levels.INFO)
+end, { desc = "Disable Norminette diagnostics for the current buffer" })
+
+vim.api.nvim_create_user_command("NormOn", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+	vim.b[bufnr].norminette_disabled = false
+	vim.notify("Norminette enabled for this buffer", vim.log.levels.INFO)
+	NorminetteCheck()
+end, { desc = "Enable Norminette diagnostics for the current buffer" })
+
+vim.api.nvim_create_user_command("NormToggle", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+	vim.b[bufnr].norminette_disabled = not vim.b[bufnr].norminette_disabled
+
+	if vim.b[bufnr].norminette_disabled then
+		vim.diagnostic.reset(ns, bufnr)
+		vim.notify("Norminette disabled for this buffer", vim.log.levels.INFO)
+	else
+		vim.notify("Norminette enabled for this buffer", vim.log.levels.INFO)
+		NorminetteCheck()
+	end
+end, { desc = "Toggle Norminette diagnostics for the current buffer" })
+
+vim.keymap.set("n", "<Space>nt", "<cmd>NormToggle<CR>", {
+	desc = "Toggle Norminette for current buffer",
+})
+
+local function norminette_status()
+	local filetype = vim.bo.filetype
+
+	if filetype ~= "c" and filetype ~= "h" then
+		return ""
+	end
+
+	if vim.b.norminette_disabled then
+		return " Norm: off"
+	end
+
+	return " Norm: on"
+end
+
+_G.norminette_status = norminette_status
 
 -- Load the header module
 require("ava.header").setup({
@@ -201,3 +254,16 @@ vim.keymap.set("n", "<Space>ct", cp.load_template, { desc = "CP: load template" 
 
 -- Quit terminal with Escape
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: normal mode" })
+
+-- =========================
+-- Vim Status Line
+-- =========================
+
+vim.opt.statusline = table.concat({
+	" %f",
+	"%m",
+	"%=",
+	"%{v:lua.norminette_status()}",
+	" %l,%c",
+	" %p%% ",
+})
