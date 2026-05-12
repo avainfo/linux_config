@@ -429,6 +429,7 @@ EOF
 }
 
 alias avainfo='~/Documents/Development/AvaInfo/'
+alias pgads='~/Documents/Development/PGADS/'
 alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
 
 export NVM_DIR="$HOME/.nvm"
