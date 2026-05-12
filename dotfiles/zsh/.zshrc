@@ -290,6 +290,144 @@ EOF
 	echo "clang-format config written to: $PWD/$target"
 }
 
+# Publish the current Git repository to a remote and push the selected branch.
+gpub() {
+	local url=""
+	local remote="origin"
+	local branch="main"
+	local positional=()
+
+	gpub_help() {
+		cat <<'EOF'
+Usage:
+  gpub <url>
+  gpub <url> <branch>
+  gpub <url> <remote> <branch>
+
+Options:
+  -u, --url <url>          Remote repository URL
+  -r, --remote <name>      Remote name, default: origin
+  -b, --branch <name>      Branch name, default: main
+  -h, --help               Show this help
+
+Examples:
+  gpub https://github.com/avainfo/42_PythonModule02.git
+  gpub https://github.com/avainfo/42_PythonModule02.git dev
+  gpub https://github.com/avainfo/42_PythonModule02.git upstream dev
+
+  gpub -u https://github.com/avainfo/42_PythonModule02.git
+  gpub -u https://github.com/avainfo/42_PythonModule02.git -b dev
+  gpub -r upstream -b dev -u https://github.com/avainfo/42_PythonModule02.git
+EOF
+	}
+
+	if [ "$#" -eq 0 ]; then
+		gpub_help
+		return 1
+	fi
+
+	while [ "$#" -gt 0 ]; do
+		case "$1" in
+			-h|--help)
+				gpub_help
+				return 0
+				;;
+			-u|--url)
+				if [ -z "${2:-}" ]; then
+					echo "Error: missing value for $1"
+					gpub_help
+					return 1
+				fi
+				url="$2"
+				shift 2
+				;;
+			-r|--remote)
+				if [ -z "${2:-}" ]; then
+					echo "Error: missing value for $1"
+					gpub_help
+					return 1
+				fi
+				remote="$2"
+				shift 2
+				;;
+			-b|--branch)
+				if [ -z "${2:-}" ]; then
+					echo "Error: missing value for $1"
+					gpub_help
+					return 1
+				fi
+				branch="$2"
+				shift 2
+				;;
+			-*)
+				echo "Error: unknown option: $1"
+				gpub_help
+				return 1
+				;;
+			*)
+				positional+=("$1")
+				shift
+				;;
+		esac
+	done
+
+	case "${#positional[@]}" in
+		0)
+			# OK only if -u/--url was used.
+			;;
+		1)
+			url="${url:-${positional[1]}}"
+			;;
+		2)
+			url="${url:-${positional[1]}}"
+			branch="${positional[2]}"
+			;;
+		3)
+			url="${url:-${positional[1]}}"
+			remote="${positional[2]}"
+			branch="${positional[3]}"
+			;;
+		*)
+			echo "Error: too many positional arguments"
+			gpub_help
+			return 1
+			;;
+	esac
+
+	if [ -z "$url" ]; then
+		echo "Error: remote URL is required"
+		gpub_help
+		return 1
+	fi
+
+	if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		echo "Error: not inside a Git repository"
+		return 1
+	fi
+
+	if git remote get-url "$remote" >/dev/null 2>&1; then
+		local current_url
+		current_url="$(git remote get-url "$remote")"
+
+		if [ "$current_url" != "$url" ]; then
+			echo "Error: remote '$remote' already exists with a different URL:"
+			echo "  current: $current_url"
+			echo "  wanted:  $url"
+			echo
+			echo "Fix manually with:"
+			echo "  git remote set-url $remote $url"
+			return 1
+		fi
+
+		echo "Remote '$remote' already exists with the correct URL."
+	else
+		git remote add "$remote" "$url"
+	fi
+
+	git branch -M "$branch"
+	git push -u "$remote" "$branch"
+}
+
 alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
 
 export NVM_DIR="$HOME/.nvm"
