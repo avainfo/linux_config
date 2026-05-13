@@ -442,3 +442,7 @@ if [ -d "$HOME/.config/ava" ]; then
         source "$conf"
     done
 fi
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
