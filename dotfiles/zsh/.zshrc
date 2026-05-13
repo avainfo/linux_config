@@ -248,6 +248,39 @@ cpnew() {
 alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out'
 alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
 
+cfl() {
+    local dir="${1:-.}"
+    local makefile="$dir/Makefile"
+    local output="$dir/compile_flags.txt"
+
+    if [[ ! -f "$makefile" ]]; then
+        echo "cfl: no Makefile found in $dir"
+        return 1
+    fi
+
+    local flags
+
+    flags="$(
+        make -C "$dir" -pn 2>/dev/null \
+        | awk '
+            /^CFLAGS[[:space:]]*[:+?]?=/ {
+                sub(/^CFLAGS[[:space:]]*[:+?]?=[[:space:]]*/, "")
+                print
+                exit
+            }
+        '
+    )"
+
+    if [[ -z "$flags" ]]; then
+        echo "cfl: CFLAGS not found in $makefile"
+        return 1
+    fi
+
+    printf "%s\n" $=flags > "$output"
+
+    echo "cfl: generated $output"
+}
+
 # Sync GMK87 keyboard clock
 rlkeyboard() {
     local repo="$HOME/Downloads/gmk87-node"
