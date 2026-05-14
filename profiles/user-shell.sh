@@ -6,9 +6,32 @@ export DRY_RUN="${DRY_RUN:-0}"
 ZSH="$HOME/.oh-my-zsh"
 ZSH_CUSTOM="$ZSH/custom"
 
+clone_or_update() {
+    local repo_url="$1"
+    local target_dir="$2"
+    local name="$3"
+
+    if [[ $DRY_RUN -eq 1 ]]; then
+        echo " [DRY-RUN] Would clone or update $name in $target_dir"
+        return
+    fi
+
+    if [[ -d "$target_dir/.git" ]]; then
+        echo "$name already exists. Updating..."
+        git -C "$target_dir" pull --ff-only >/dev/null || {
+            echo " [WARNING] Could not update $name. Keeping existing copy."
+            return 0
+        }
+    elif [[ -d "$target_dir" ]]; then
+        echo " [WARNING] $target_dir exists but is not a Git repository. Skipping $name."
+    else
+        echo "Cloning $name..."
+        git clone --depth=1 "$repo_url" "$target_dir"
+    fi
+}
+
 if [[ $DRY_RUN -eq 1 ]]; then
     echo " [DRY-RUN] Would prepare Oh My Zsh and plugins in $HOME"
-    exit 0
 fi
 
 if ! command -v git >/dev/null 2>&1; then
@@ -19,38 +42,50 @@ fi
 echo ">> Preparing User Shell (Oh My Zsh & Plugins)..."
 
 # Oh My Zsh
-if [[ ! -d "$ZSH" ]]; then
-    echo "Cloning Oh My Zsh..."
-    git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$ZSH"
-else
-    echo "Oh My Zsh already exists at $ZSH"
-fi
+clone_or_update \
+    "https://github.com/ohmyzsh/ohmyzsh.git" \
+    "$ZSH" \
+    "Oh My Zsh"
 
-mkdir -p "$ZSH_CUSTOM/plugins"
-mkdir -p "$ZSH_CUSTOM/themes"
+run_mkdir() {
+    if [[ $DRY_RUN -eq 1 ]]; then
+        echo " [DRY-RUN] Would create directory $1"
+    else
+        mkdir -p "$1"
+    fi
+}
+
+run_mkdir "$ZSH_CUSTOM/plugins"
+run_mkdir "$ZSH_CUSTOM/themes"
 
 # Powerlevel10k
-if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
-    echo "Cloning Powerlevel10k..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
-else
-    echo "Powerlevel10k already exists."
-fi
+clone_or_update \
+    "https://github.com/romkatv/powerlevel10k.git" \
+    "$ZSH_CUSTOM/themes/powerlevel10k" \
+    "Powerlevel10k"
 
 # zsh-autosuggestions
-if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
-    echo "Cloning zsh-autosuggestions..."
-    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-else
-    echo "zsh-autosuggestions already exists."
-fi
+clone_or_update \
+    "https://github.com/zsh-users/zsh-autosuggestions.git" \
+    "$ZSH_CUSTOM/plugins/zsh-autosuggestions" \
+    "zsh-autosuggestions"
 
 # zsh-syntax-highlighting
-if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
-    echo "Cloning zsh-syntax-highlighting..."
-    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-else
-    echo "zsh-syntax-highlighting already exists."
-fi
+clone_or_update \
+    "https://github.com/zsh-users/zsh-syntax-highlighting.git" \
+    "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" \
+    "zsh-syntax-highlighting"
+
+# zsh-completions
+clone_or_update \
+    "https://github.com/zsh-users/zsh-completions.git" \
+    "$ZSH_CUSTOM/plugins/zsh-completions" \
+    "zsh-completions"
+
+# zsh-history-substring-search
+clone_or_update \
+    "https://github.com/zsh-users/zsh-history-substring-search.git" \
+    "$ZSH_CUSTOM/plugins/zsh-history-substring-search" \
+    "zsh-history-substring-search"
 
 echo "User shell prepared."
