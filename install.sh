@@ -24,7 +24,7 @@ Usage: bash install.sh [OPTIONS]
 
 Options:
   --full          Install everything (default if no flags are provided)
-  --user-only     Only install dotfiles and user scripts (no sudo required)
+  --user-only     Only install dotfiles, user apps, and user scripts (no sudo required)
   --system-only   Only install packages and system configs
   --docker        Install Docker (requires apt)
   --no-system     Skip system configurations (journald, coredump, sysctl)
@@ -124,8 +124,10 @@ if [[ $MODE_SYSTEM_ONLY -eq 1 && $MODE_NO_SYSTEM -eq 0 ]]; then
     SUM_SYS_CONFIGS=1
 fi
 
-# 4. Dotfiles & User Config
+# 4. User Apps, Shell, Dotfiles & User Config
 if [[ $MODE_USER_ONLY -eq 1 ]]; then
+    echo ">> Preparing user apps..."
+    bash "$ROOT/profiles/user-apps.sh"
     echo ">> Preparing user shell..."
     bash "$ROOT/profiles/user-shell.sh"
     echo ">> Installing dotfiles..."
