@@ -4,6 +4,20 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export ROOT
 
+if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
+    cat >&2 <<EOF
+Do not run this script with sudo.
+Run it as your normal user instead:
+  bash install.sh --full
+  bash install.sh --user-only
+
+The script calls sudo internally when system changes are required.
+For root dotfiles, use:
+  sudo bash dotfiles/install_root.sh
+EOF
+    exit 1
+fi
+
 show_help() {
     cat <<EOF
 Usage: bash install.sh [OPTIONS]
