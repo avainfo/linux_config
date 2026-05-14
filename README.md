@@ -24,6 +24,11 @@ See [COMMERCIAL.md](COMMERCIAL.md) for more details.
 
 ## Installation
 
+> [!IMPORTANT]
+> Do not run the main installer with `sudo`.
+> Run `bash install.sh ...` as your normal user. The installer calls `sudo` internally when system changes are required.
+> Running the main installer with `sudo` can install user dotfiles into `/root` instead of your real home directory.
+
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/avainfo/linux_config ~/.dotfiles
@@ -41,13 +46,13 @@ bash install.sh --full --dry-run
 bash install.sh --user-only --dry-run
 ```
 
-**Full Workstation Install (Requires sudo)**
+**Full Workstation Install (Requires sudo internally)**
 Installs packages, system configurations, and user dotfiles.
 ```bash
 bash install.sh --full
 ```
 
-**System-Only Install (Requires sudo)**
+**System-Only Install (Requires sudo internally)**
 Only installs apt packages and system configurations.
 ```bash
 bash install.sh --system-only
@@ -59,7 +64,7 @@ Installs packages and dotfiles, but leaves system files (like journald and sysct
 bash install.sh --full --no-system
 ```
 
-**Full Install + Docker (Requires sudo)**
+**Full Install + Docker (Requires sudo internally)**
 ```bash
 bash install.sh --full --docker
 ```
@@ -70,13 +75,20 @@ Only links dotfiles and user scripts to your home directory. Safe for shared ser
 bash install.sh --user-only
 ```
 
+**Root Dotfiles Install**
+Root dotfiles are intentionally handled by a separate script.
+```bash
+sudo bash dotfiles/install_root.sh
+```
+
 ## What Gets Installed
 
 - **Zsh & Oh My Zsh**: The user shell profile automatically downloads Oh My Zsh, Powerlevel10k prompt, and plugins (`autosuggestions`, `syntax-highlighting`) if they are missing. Note: `chsh` is **not** run automatically.
 - **Development Tools**: C/C++ compilers, CMake, Ninja, GDB, LLDB, Bear, Cppcheck.
 - **Diagnostics Tools**: Valgrind, strace, ltrace, systemd-coredump, stress-ng, perf.
 - **Desktop Utilities**: Kitty terminal, fonts, clipboard tools.
-- **Custom Scripts**: Found in `scripts/`, including `analyze-core`, `debug-service`, and `collect-diagnostics`.
+- **Editor Configs**: Vim and Neovim configuration.
+- **Custom Scripts**: Found in `scripts/` and `dotfiles/bin/`, including nested script directories such as JetBrains launchers.
 
 ## Safety Model
 
