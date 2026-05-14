@@ -15,8 +15,9 @@ BACKUP_DIR="$HOME/.config/ava/backups/$(date +%Y%m%d-%H%M%S)"
 if [[ $DRY_RUN -eq 0 ]]; then
     mkdir -p "$HOME/bin"
     mkdir -p "$HOME/.config/kitty"
+    mkdir -p "$HOME/.config"
 else
-    echo " [DRY-RUN] Would create directory $HOME/bin and $HOME/.config/kitty"
+    echo " [DRY-RUN] Would create directories $HOME/bin, $HOME/.config, and $HOME/.config/kitty"
 fi
 
 create_backup() {
@@ -47,7 +48,7 @@ install_link() {
     fi
 
     if [[ -e "$target_path" || -L "$target_path" ]]; then
-        if cmp -s "$target_path" "$source_path"; then
+        if [[ -f "$target_path" && -f "$source_path" ]] && cmp -s "$target_path" "$source_path"; then
             echo " [OK]   Content identical, replacing with symlink: $target_path"
             if [[ $DRY_RUN -eq 0 ]]; then
                 rm -f "$target_path"
@@ -63,8 +64,10 @@ install_link() {
             echo "Conflict:"
             echo "  existing: $target_path"
             echo "  repo: $source_path"
-            echo "Run:"
-            echo "  diff -u $target_path $source_path"
+            if [[ -f "$target_path" && -f "$source_path" ]]; then
+                echo "Run:"
+                echo "  diff -u $target_path $source_path"
+            fi
             SUM_DOT_CONFLICTS=$((SUM_DOT_CONFLICTS + 1))
             return
         fi
@@ -104,7 +107,11 @@ install_link() {
                     return
                     ;;
                 4)
-                    diff -u "$target_path" "$source_path" || true
+                    if [[ -f "$target_path" && -f "$source_path" ]]; then
+                        diff -u "$target_path" "$source_path" || true
+                    else
+                        echo "   Diff is only available for regular files."
+                    fi
                     ;;
                 5)
                     echo "Aborting."
@@ -127,6 +134,20 @@ install_link() {
     fi
 }
 
+install_tree_links() {
+    local source_dir="$1"
+    local target_dir="$2"
+
+    if [[ ! -d "$source_dir" ]]; then
+        return
+    fi
+
+    while IFS= read -r -d '' script; do
+        local relative_path="${script#"$source_dir/"}"
+        install_link "$script" "$target_dir/$relative_path"
+    done < <(find "$source_dir" -type f -print0)
+}
+
 echo "Linking dotfiles..."
 
 install_link "$ROOT/zsh/.zshrc"              "$HOME/.zshrc"
@@ -136,22 +157,11 @@ install_link "$ROOT/vim/.vimrc"              "$HOME/.vimrc"
 install_link "$ROOT/git/.gitconfig"          "$HOME/.gitconfig"
 install_link "$ROOT/kitty/kitty.conf"        "$HOME/.config/kitty/kitty.conf"
 install_link "$ROOT/debug/.gdbinit"          "$HOME/.gdbinit"
+install_link "$ROOT/nvim"                    "$HOME/.config/nvim"
 
-# Sync bin scripts individually
-if [[ -d "$ROOT/bin" ]]; then
-    for script in "$ROOT/bin/"*; do
-        if [[ -f "$script" ]]; then
-            install_link "$script" "$HOME/bin/$(basename "$script")"
-        fi
-    done
-fi
-if [[ -d "$ROOT/../scripts" ]]; then
-    for script in "$ROOT/../scripts/"*; do
-        if [[ -f "$script" ]]; then
-            install_link "$script" "$HOME/bin/$(basename "$script")"
-        fi
-    done
-fi
+# Sync bin scripts recursively, preserving nested directories such as jetbrains/.
+install_tree_links "$ROOT/bin" "$HOME/bin"
+install_tree_links "$ROOT/../scripts" "$HOME/bin"
 
 if [[ $DRY_RUN -eq 0 ]]; then
     cat <<EOF > /tmp/ava_install_summary.env
