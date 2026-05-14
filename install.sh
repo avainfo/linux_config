@@ -132,6 +132,8 @@ if [[ $MODE_USER_ONLY -eq 1 ]]; then
     bash "$ROOT/profiles/user-shell.sh"
     echo ">> Installing dotfiles..."
     bash "$ROOT/dotfiles/install.sh"
+    echo ">> Installing Neovim plugins..."
+    bash "$ROOT/profiles/user-nvim.sh"
 fi
 
 echo ""
