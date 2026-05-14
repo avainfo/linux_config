@@ -25,13 +25,13 @@ export ZSH="$HOME/.oh-my-zsh"
 typeset -U path
 
 path=(
-  $HOME/.config/kitty.app/bin
+  $HOME/.local/bin
+  $HOME/.local/kitty.app/bin
   $HOME/bin
   $HOME/bin/jetbrains
   $HOME/srcs/flutter/bin
   $HOME/srcs/cmdline-tools/bin
   $HOME/.pub-cache/bin
-  $HOME/.local/bin
   $path
 )
 
@@ -113,7 +113,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
             git
+            zsh-completions
             zsh-autosuggestions
+            zsh-history-substring-search
             zsh-syntax-highlighting
         )
 
@@ -443,6 +445,10 @@ if [ -d "$HOME/.config/ava" ]; then
     done
 fi
 
-. "$HOME/.atuin/bin/env"
+if [[ -f "$HOME/.atuin/bin/env" ]]; then
+    . "$HOME/.atuin/bin/env"
+fi
 
-eval "$(atuin init zsh)"
+if command -v atuin >/dev/null 2>&1; then
+    eval "$(atuin init zsh)"
+fi
