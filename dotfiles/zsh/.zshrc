@@ -479,3 +479,7 @@ fi
 . "$HOME/.atuin/bin/env"
 
 eval "$(atuin init zsh)"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/ava/.local/bin:$PATH"

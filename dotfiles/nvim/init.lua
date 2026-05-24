@@ -294,8 +294,11 @@ vim.keymap.set("n", "<Space>ct", cp.load_template, { desc = "CP: load template" 
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: normal mode" })
 
 -- Yank to system clipboard with y+
-vim.keymap.set({ "n", "x" }, "y+", '"+y', {
-	noremap = true,
-	silent = true,
-	desc = "Yank to system clipboard",
-})
+-- vim.keymap.set({ "n", "x" }, "y+", '"+y', {
+-- 	noremap = true,
+-- 	silent = true,
+-- 	desc = "Yank to system clipboard",
+-- })
+
+-- vim.keymap.set({ "n", "i", "v" }, "<Left>", "<Nop>", { noremap = true, silent = true })
+-- vim.keymap.set({ "n", "i", "v" }, "<Right>", "<Nop>", { noremap = true, silent = true })
