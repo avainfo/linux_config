@@ -4,13 +4,27 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export ROOT
 
+if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
+    cat >&2 <<EOF
+Do not run this script with sudo.
+Run it as your normal user instead:
+  bash install.sh --full
+  bash install.sh --user-only
+
+The script calls sudo internally when system changes are required.
+For root dotfiles, use:
+  sudo bash dotfiles/install_root.sh
+EOF
+    exit 1
+fi
+
 show_help() {
     cat <<EOF
 Usage: bash install.sh [OPTIONS]
 
 Options:
   --full          Install everything (default if no flags are provided)
-  --user-only     Only install dotfiles and user scripts (no sudo required)
+  --user-only     Only install dotfiles, user tools, and user scripts (no sudo required)
   --system-only   Only install packages and system configs
   --docker        Install Docker (requires apt)
   --no-system     Skip system configurations (journald, coredump, sysctl)
@@ -110,12 +124,16 @@ if [[ $MODE_SYSTEM_ONLY -eq 1 && $MODE_NO_SYSTEM -eq 0 ]]; then
     SUM_SYS_CONFIGS=1
 fi
 
-# 4. Dotfiles & User Config
+# 4. User Tools, Shell, Dotfiles & User Config
 if [[ $MODE_USER_ONLY -eq 1 ]]; then
+    echo ">> Preparing user tools..."
+    bash "$ROOT/profiles/user-tools.sh"
     echo ">> Preparing user shell..."
     bash "$ROOT/profiles/user-shell.sh"
     echo ">> Installing dotfiles..."
     bash "$ROOT/dotfiles/install.sh"
+    echo ">> Installing Neovim plugins..."
+    bash "$ROOT/profiles/user-nvim.sh"
 fi
 
 echo ""
