@@ -46,12 +46,6 @@ vim.api.nvim_create_autocmd("User", {
 
 		SetStatuslineHighlights()
 
-		pcall(function()
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python", "json", "bash", "yaml", "markdown" },
-				highlight = { enable = true, additional_vim_regex_highlighting = false },
-			})
-		end)
 	end,
 })
 -- Time Neovim waits for mapped key sequences
