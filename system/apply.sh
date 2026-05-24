@@ -14,9 +14,10 @@ backup_system_file() {
         if [[ $DRY_RUN -eq 1 ]]; then
             echo "   [DRY-RUN] Would backup $target to $BACKUP_DIR/"
         else
-            mkdir -p "$BACKUP_DIR"
-            sudo cp -a "$target" "$BACKUP_DIR/"
-            echo "   [Backup] Saved to $BACKUP_DIR/$(basename "$target")"
+            local target_dir="$BACKUP_DIR$(dirname "$target")"
+            mkdir -p "$target_dir"
+            sudo cp -a "$target" "$target_dir/"
+            echo "   [Backup] Saved to $target_dir/$(basename "$target")"
         fi
     fi
 }

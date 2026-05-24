@@ -145,7 +145,7 @@ install_tree_links() {
     while IFS= read -r -d '' script; do
         local relative_path="${script#"$source_dir/"}"
         install_link "$script" "$target_dir/$relative_path"
-    done < <(find "$source_dir" -type f -print0)
+    done < <(find "$source_dir" \( -type f -o -type l \) -print0)
 }
 
 echo "Linking dotfiles..."
@@ -163,8 +163,8 @@ install_link "$ROOT/nvim"                    "$HOME/.config/nvim"
 install_tree_links "$ROOT/bin" "$HOME/bin"
 install_tree_links "$ROOT/../scripts" "$HOME/bin"
 
-if [[ $DRY_RUN -eq 0 ]]; then
-    cat <<EOF > /tmp/ava_install_summary.env
+if [[ $DRY_RUN -eq 0 && -n "${INSTALL_SUMMARY_FILE:-}" ]]; then
+    cat <<EOF > "$INSTALL_SUMMARY_FILE"
 export SUM_DOT_INSTALLED=$SUM_DOT_INSTALLED
 export SUM_DOT_SKIPPED=$SUM_DOT_SKIPPED
 export SUM_DOT_CONFLICTS=$SUM_DOT_CONFLICTS

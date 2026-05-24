@@ -55,6 +55,6 @@ link "$ROOT/nvim"                    "$HOME/.config/nvim"
 # Using rsync to merge scripts into ~/bin
 echo "📂 Installing scripts to ~/bin..."
 mkdir -p "$HOME/bin"
-rsync -av --delete "$ROOT/bin/" "$HOME/bin/" 2>/dev/null || true
+rsync -av "$ROOT/bin/" "$HOME/bin/" 2>/dev/null || true
 
 echo "✅ macOS setup complete! Restart your shell."

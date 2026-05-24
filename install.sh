@@ -40,6 +40,7 @@ MODE_SYSTEM_ONLY=0
 MODE_DOCKER=0
 MODE_NO_SYSTEM=0
 export DRY_RUN=0
+export INSTALL_SUMMARY_FILE="$(mktemp -t ava_install_summary.XXXXXX)"
 
 # Summary tracking
 export SUM_DOT_INSTALLED=0
@@ -75,9 +76,8 @@ if [[ $MODE_FULL -eq 1 ]]; then
     MODE_SYSTEM_ONLY=1
 fi
 
-if [[ $MODE_USER_ONLY -eq 1 && $MODE_FULL -eq 0 ]]; then
+if [[ $MODE_USER_ONLY -eq 1 && $MODE_SYSTEM_ONLY -eq 0 ]]; then
     MODE_NO_SYSTEM=1
-    MODE_SYSTEM_ONLY=0
 fi
 
 echo "======================================"
@@ -140,9 +140,9 @@ echo ""
 echo "======================================"
 echo " Installation Summary"
 echo "======================================"
-if [[ $DRY_RUN -eq 0 && -f "/tmp/ava_install_summary.env" ]]; then
-    source "/tmp/ava_install_summary.env"
-    rm -f "/tmp/ava_install_summary.env"
+if [[ $DRY_RUN -eq 0 && -n "${INSTALL_SUMMARY_FILE:-}" && -f "$INSTALL_SUMMARY_FILE" ]]; then
+    source "$INSTALL_SUMMARY_FILE"
+    rm -f "$INSTALL_SUMMARY_FILE"
 fi
 
 echo " Dotfiles Linked     : $SUM_DOT_INSTALLED"

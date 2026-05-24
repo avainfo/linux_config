@@ -43,8 +43,8 @@ link() {
 	mkdir -p "$(dirname "$target")"
 	backup_existing "$target"
 
-	ln -snf "$source" "$target"
-	echo "Linked $target -> $source"
+	cp -a "$source" "$target"
+	echo "Copied $source -> $target"
 }
 
 clone_or_update() {
