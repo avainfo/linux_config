@@ -189,6 +189,20 @@ vim.api.nvim_create_user_command("NormToggle", function()
 	end
 end, { desc = "Toggle Norminette diagnostics for the current buffer" })
 
+vim.api.nvim_create_autocmd("BufReadPost", {
+    pattern = { "*.c", "*.h" },
+    callback = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local path = vim.api.nvim_buf_get_name(bufnr)
+
+        if path:match("/42/") then
+            vim.b[bufnr].norminette_disabled = false
+        else
+            vim.b[bufnr].norminette_disabled = true
+        end
+    end,
+})
+
 vim.keymap.set("n", "<Space>nt", "<cmd>NormToggle<CR>", {
 	desc = "Toggle Norminette for current buffer",
 })
