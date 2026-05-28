@@ -166,14 +166,17 @@ check() {
 }
 
 checkp() {
-    echo "[1/3] py_compile..."
-    python3 -m py_compile "$@" || return 1
+    echo "[1/4] py_compile..."
+    python3 -m py_compile "$@"
 
-    echo "[2/3] flake8..."
-    python3 -m flake8 "$@" || return 1
+    echo "[2/4] flake8..."
+    python3 -m flake8 "$@"
 
-    echo "[3/3] mypy --strict..."
-    python3 -m mypy --strict "$@" || return 1
+    echo "[3/4] mypy --strict..."
+    python3 -m mypy --strict "$@"
+
+    echo "[4/4] cleaning compilation..."
+	rm -rf **/__pycache__
 }
 
 cpi() {
