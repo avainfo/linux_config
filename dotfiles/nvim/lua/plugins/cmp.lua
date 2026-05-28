@@ -338,10 +338,12 @@ return {
         },
 
         -- Fenêtres avec bordures
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
+		window = {
+			completion = cmp.config.window.bordered(),
+			documentation = cmp.config.window.bordered({
+				winhighlight = "normal:normal,floatborder:floatborder,cursorline:visual,search:none",
+			}),
+		},
 
         -- Ghost text (optionnel)
         experimental = {
