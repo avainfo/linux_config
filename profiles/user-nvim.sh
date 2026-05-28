@@ -3,6 +3,11 @@ set -euo pipefail
 
 export DRY_RUN="${DRY_RUN:-0}"
 
+if [[ "${SKIP_NVIM_BOOTSTRAP:-0}" -eq 1 ]]; then
+    echo " [INFO] Skipping Neovim plugin/Mason bootstrap."
+    exit 0
+fi
+
 NVIM_CONFIG_DIR="$HOME/.config/nvim"
 
 if [[ $DRY_RUN -eq 1 ]]; then
