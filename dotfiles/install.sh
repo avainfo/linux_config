@@ -158,6 +158,7 @@ install_link "$ROOT/git/.gitconfig"          "$HOME/.gitconfig"
 install_link "$ROOT/kitty/kitty.conf"        "$HOME/.config/kitty/kitty.conf"
 install_link "$ROOT/debug/.gdbinit"          "$HOME/.gdbinit"
 install_link "$ROOT/nvim"                    "$HOME/.config/nvim"
+install_link "$ROOT/clangd/config.yaml"      "$HOME/.config/clangd/config.yaml"
 
 # Sync bin scripts recursively, preserving nested directories such as jetbrains/.
 install_tree_links "$ROOT/bin" "$HOME/bin"
