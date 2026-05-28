@@ -276,6 +276,16 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "gitcommit",
+    callback = function()
+        vim.opt_local.textwidth = 72
+        vim.opt_local.colorcolumn = "51,73"
+        vim.opt_local.spell = true
+        vim.opt_local.wrap = true
+    end,
+})
+
 -- Telescope keymaps are in lua/plugins/telescope.lua
 
 -- =========================
