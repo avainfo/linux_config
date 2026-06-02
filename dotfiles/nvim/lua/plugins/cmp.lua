@@ -272,6 +272,8 @@ return {
       local luasnip = require("luasnip")
       local lspkind = require("lspkind")
 
+      require("config.cmp_doxygen_docs")
+
       -- Charger snippets friendly-snippets
       require("luasnip.loaders.from_vscode").lazy_load()
 

@@ -1,8 +1,9 @@
 Hover:
   ShowAKA: Yes
-  DocumentationFormat:
-    - markdown
-    - plaintext
+
+Documentation:
+  CommentFormat: Doxygen
+
 Diagnostics:
   UnusedIncludes: Strict
 

@@ -320,3 +320,20 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: 
 
 -- vim.keymap.set({ "n", "i", "v" }, "<Left>", "<Nop>", { noremap = true, silent = true })
 -- vim.keymap.set({ "n", "i", "v" }, "<Right>", "<Nop>", { noremap = true, silent = true })
+
+vim.keymap.set("i", "<C-x>", function()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local ft = vim.bo[buf].filetype
+
+    if ft == "cmp_docs" then
+      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+
+      vim.notify(
+        "CMP DOCS CONTENT:\n\n" .. table.concat(lines, "\n"),
+        vim.log.levels.INFO,
+        { title = "cmp_docs debug" }
+      )
+    end
+  end
+end, { desc = "Debug cmp docs content" })
