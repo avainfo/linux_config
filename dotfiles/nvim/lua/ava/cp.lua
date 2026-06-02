@@ -1,5 +1,5 @@
 -- === CP (Competitive Programming) workflow ===
--- Compile + run avec timing, template auto, terminal split
+-- Compile + run with timing, auto template, terminal split
 
 local M = {}
 

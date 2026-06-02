@@ -1,8 +1,7 @@
--- Configuration nvim-cmp pour C et Python (Neovim 0.11+ compatible)
--- Compatible avec la nouvelle API vim.lsp.config
+-- nvim-cmp configuration for C and Python
 
 return {
-  -- Mason : Gestionnaire de LSP/tools
+  -- Mason : LSP/tools manager
   {
     "williamboman/mason.nvim",
     cmd = "Mason",
@@ -21,7 +20,7 @@ return {
     end,
   },
 
-  -- Mason LSP Config : Bridge entre Mason et lspconfig
+  -- Mason LSP Config
   {
     "williamboman/mason-lspconfig.nvim",
     dependencies = { "mason.nvim" },
@@ -37,7 +36,7 @@ return {
     end,
   },
 
-  -- Mason Tool Installer : Auto-install des tools supplémentaires
+  -- Mason Tool Installer
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     dependencies = { "mason.nvim" },
@@ -47,7 +46,7 @@ return {
           "clangd",
           "basedpyright",
           "ruff",
-          "clang-format", -- Pour conform.nvim
+          "clang-format", -- For conform.nvim
         },
         auto_update = false,
         run_on_start = true,
@@ -55,7 +54,7 @@ return {
     end,
   },
 
-  -- LSP Config principal
+  -- Main LSP Config
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
@@ -70,10 +69,10 @@ return {
 
       local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
-      -- Capabilities : Annonce à LSP qu'on supporte snippets + autocomplete
+      -- Capabilities
       local capabilities = cmp_nvim_lsp.default_capabilities()
 
-      -- Keymaps LSP : Activés quand LSP s'attache au buffer
+      -- LSP Keymaps
       local on_attach = function(client, bufnr)
         local opts = { noremap = true, silent = true, buffer = bufnr }
 
@@ -98,14 +97,14 @@ return {
         vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
         vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
 
-        -- Formatage (via conform.nvim maintenant, mais on garde en fallback)
+        -- Formatting fallback
         vim.keymap.set("n", "<leader>f", function()
           vim.lsp.buf.format({ async = true })
         end, opts)
       end
 
       if use_new_api then
-        -- Neovim 0.11+ : Nouvelle API vim.lsp.config
+        -- Neovim 0.11+ API
         vim.lsp.config('clangd', {
           capabilities = (function()
             local c = vim.tbl_deep_extend("force", {}, capabilities)
@@ -146,12 +145,12 @@ return {
           end,
         })
 
-        -- Enable LSP pour les fichiers concernés
+        -- Enable LSP
         vim.lsp.enable('clangd')
         vim.lsp.enable('basedpyright')
         vim.lsp.enable('ruff')
       else
-        -- Neovim < 0.11 : Ancienne API lspconfig (avec suppression du warning)
+        -- Neovim < 0.11 API
         local lspconfig = require("lspconfig")
 
         lspconfig.clangd.setup({
@@ -195,7 +194,7 @@ return {
         })
       end
 
-      -- Configuration diagnostics globale
+      -- Global diagnostics configuration
       vim.diagnostic.config({
         virtual_text = {
           prefix = "●",
@@ -222,7 +221,7 @@ return {
     end,
   },
 
-  -- Conform : Formatage moderne (remplace none-ls)
+  -- Conform
   {
     "stevearc/conform.nvim",
     event = { "BufReadPre", "BufNewFile" },
@@ -242,7 +241,7 @@ return {
 		-- },
       })
 
-      -- Keymap pour formater manuellement
+      -- Keymap for manual formatting
 	vim.keymap.set("n", "<leader>fm", function()
 		require("conform").format({
 			lsp_fallback = true,
@@ -253,7 +252,7 @@ return {
 	end,
   },
 
-  -- nvim-cmp : Moteur d'autocomplétion
+  -- nvim-cmp
   {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
@@ -274,7 +273,7 @@ return {
 
       require("config.cmp_doxygen_docs")
 
-      -- Charger snippets friendly-snippets
+      -- Load friendly-snippets
       require("luasnip.loaders.from_vscode").lazy_load()
 
       cmp.setup({
@@ -298,7 +297,7 @@ return {
           ["<C-e>"] = cmp.mapping.abort(),
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
 
-          -- Tab pour navigation + snippets
+          -- Tab for navigation + snippets
           ["<Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item()
@@ -320,7 +319,7 @@ return {
           end, { "i", "s" }),
         }),
 
-        -- Sources (ordre = priorité)
+        -- Sources (order = priority)
         sources = cmp.config.sources({
           { name = "nvim_lsp", priority = 1000 },
           { name = "luasnip", priority = 750 },
@@ -329,7 +328,7 @@ return {
           { name = "buffer", priority = 250 },
         }),
 
-        -- Formatage avec icônes lspkind
+        -- Formatting with lspkind icons
         formatting = {
           format = lspkind.cmp_format({
             mode = "symbol_text",
@@ -339,7 +338,7 @@ return {
           }),
         },
 
-        -- Fenêtres avec bordures
+        -- Windows with borders
 		window = {
 			completion = cmp.config.window.bordered(),
 			documentation = cmp.config.window.bordered({
@@ -347,13 +346,13 @@ return {
 			}),
 		},
 
-        -- Ghost text (optionnel)
+        -- Ghost text (optional)
         experimental = {
           ghost_text = true,
         },
       })
 
-      -- Complétion ligne de commande '/'
+      -- Command line completion '/'
       cmp.setup.cmdline("/", {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
@@ -361,7 +360,7 @@ return {
         }
       })
 
-      -- Complétion ligne de commande ':'
+      -- Command line completion ':'
       cmp.setup.cmdline(":", {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
@@ -373,7 +372,7 @@ return {
     end,
   },
 
-  -- Auto-pairs : Fermeture automatique des parenthèses/brackets
+  -- Auto-pairs
   {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
@@ -387,7 +386,7 @@ return {
         },
       })
 
-      -- Intégration avec nvim-cmp
+      -- Integration with nvim-cmp
       local cmp_autopairs = require("nvim-autopairs.completion.cmp")
       local cmp = require("cmp")
       cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())

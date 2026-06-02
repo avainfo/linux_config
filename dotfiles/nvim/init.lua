@@ -45,9 +45,9 @@ vim.api.nvim_create_autocmd("User", {
 		vim.cmd("hi Normal guibg=#1a1a1a")
 
 		SetStatuslineHighlights()
-
 	end,
 })
+
 -- Time Neovim waits for mapped key sequences
 vim.opt.timeout = true
 vim.opt.timeoutlen = 10000
@@ -91,7 +91,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- Numerotation
+-- Numbering
 vim.opt.number = true
 vim.opt.relativenumber = true
 

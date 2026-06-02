@@ -1,12 +1,9 @@
--- Configuration Catppuccin
--- À placer dans ~/.config/nvim/lua/plugins/catppuccin.lua
-
 return {
   {
     "catppuccin/nvim",
     name = "catppuccin",
-    priority = 1000,      -- Charge en premier
-    lazy = false,         -- Charge immédiatement (pas lazy)
+    priority = 1000,      -- Load first
+    lazy = false,         -- Load immediately (not lazy)
     config = function()
       require("catppuccin").setup({
         flavour = "mocha", -- latte, frappe, macchiato, mocha
@@ -40,9 +37,9 @@ return {
         },
       })
       
-      -- Applique le colorscheme
+      -- Apply the colorscheme
       vim.cmd("colorscheme catppuccin")
-      -- Background customisé
+      -- Custom background
       vim.cmd("hi Normal guibg=#1a1a1a")
     end,
   },

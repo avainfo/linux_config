@@ -1,6 +1,3 @@
--- Configuration Telescope
--- À placer dans ~/.config/nvim/lua/plugins/telescope.lua
-
 return {
   {
     "nvim-telescope/telescope.nvim",
