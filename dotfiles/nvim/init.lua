@@ -56,7 +56,8 @@ vim.opt.timeoutlen = 10000
 vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 
--- Indentation (TABS)
+-- Global indentation
+-- Default: tabs, useful for C / 42
 vim.opt.expandtab = false
 vim.opt.smartindent = true
 vim.opt.cindent = true
@@ -64,6 +65,31 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.textwidth = 120
+
+-- Python : PEP8 = 4 spaces, no tabs
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "python",
+	callback = function()
+		vim.opt_local.expandtab = true
+		vim.opt_local.tabstop = 4
+		vim.opt_local.softtabstop = 4
+		vim.opt_local.shiftwidth = 4
+		vim.opt_local.cindent = false
+		vim.opt_local.smartindent = true
+	end,
+})
+
+-- C / C++: tabs, useful for 42 and your low-level style
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "c", "cpp", "h", "hpp" },
+	callback = function()
+		vim.opt_local.expandtab = false
+		vim.opt_local.tabstop = 4
+		vim.opt_local.softtabstop = 4
+		vim.opt_local.shiftwidth = 4
+		vim.opt_local.cindent = true
+	end,
+})
 
 -- Numerotation
 vim.opt.number = true
