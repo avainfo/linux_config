@@ -1,42 +1,26 @@
-if command -v figlet >/dev/null 2>&1; then
-    figlet -f standard "Welcome"
-    figlet -f standard "MR. DO SOUTO"
-fi
+# ============================================================
+# 1. INSTANT PROMPT (doit rester tout en haut)
+# ============================================================
+[[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]] && \
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-if command -v dircolors >/dev/null 2>&1; then
-  eval "$(dircolors -b ~/.dircolors 2>/dev/null || dircolors -b)"
-fi
-
-alias ls='ls --color=auto'
-
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-
-# Path to your Oh My Zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
+# ============================================================
+# 2. PATH
+# ============================================================
 typeset -U path
-
 path=(
-  $HOME/.local/bin
-  $HOME/.local/kitty.app/bin
-  $HOME/bin
-  $HOME/bin/jetbrains
-  $HOME/srcs/flutter/bin
-  $HOME/srcs/cmdline-tools/bin
-  $HOME/.pub-cache/bin
-  $path
+    $HOME/.local/bin
+    $HOME/.local/kitty.app/bin
+    $HOME/bin
+    $HOME/bin/jetbrains
+    $HOME/srcs/flutter/bin
+    $HOME/srcs/cmdline-tools/bin
+    $HOME/.pub-cache/bin
+    $path
 )
 
-# QT6 Paths
-if [ -d "$HOME/Qt/6.9.2/gcc_64" ]; then
+# QT6
+if [[ -d "$HOME/Qt/6.9.2/gcc_64" ]]; then
     export QT_BASE="$HOME/Qt/6.9.2/gcc_64"
     export CMAKE_PREFIX_PATH="$QT_BASE/lib/cmake${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
     export PATH="$QT_BASE/bin:$PATH"
@@ -45,204 +29,89 @@ if [ -d "$HOME/Qt/6.9.2/gcc_64" ]; then
     export QML2_IMPORT_PATH="$QT_BASE/qml${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
 fi
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# ============================================================
+# 3. OH MY ZSH
+# ============================================================
+export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
+DISABLE_AUTO_TITLE="true"
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(
-            git
-            zsh-completions
-            zsh-autosuggestions
-            zsh-history-substring-search
-            zsh-syntax-highlighting
-        )
+    git
+    zsh-completions
+    zsh-autosuggestions
+    zsh-history-substring-search
+    zsh-syntax-highlighting
+)
 
-if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
-    source "$ZSH/oh-my-zsh.sh"
-else
-    echo "Warning: Oh My Zsh not found at $ZSH"
-fi
+[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh" || echo "Warning: Oh My Zsh not found"
 
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-c() {
-    cc -Wall -Wextra -Werror "$@" && ./a.out && rm -f a.out
-}
-
-val() {
-    cc -Wall -Wextra -Werror "$@" && valgrind ./a.out && rm -f a.out
-}
-
-check() {
-	norminette "$@"
-}
-
-checkp() {
-    echo "[1/4] py_compile..."
-    python3 -m py_compile "$@"
-
-    echo "[2/4] flake8..."
-    python3 -m flake8 "$@"
-
-    echo "[3/4] mypy --strict..."
-    python3 -m mypy --strict "$@"
-
-    echo "[4/4] cleaning compilation..."
-	rm -rf **/__pycache__
-}
-
-cpi() {
-    g++ -o main "$1" && ./main < input && rm -f main
-}
-
-mf() {
-	varname=$1
-	shift
-	echo -n "$varname = " >> Makefile
-	ls "$@" | sed ':a;N;$!ba;s/\n/ \\\n\t/g' >> Makefile
-	echo >> Makefile
-}
-
-studio() {
-	local target="${1:-.}"
-
-	if command -v realpath >/dev/null 2>&1; then
-		target="$(realpath -m -- "$target")"
-	else
-		target="$(python3 - <<'PY' "$target"
-import os, sys
-print(os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else '.'))
-PY
-)"
-	fi
-
-	if [ -f "$HOME/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio" ]; then
-		"$HOME/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio" "$target" >/dev/null 2>&1 &
-		disown
-	else
-		echo "Android Studio not found."
-	fi
-}
-
-if [ -z "$TMUX" ]; then
-	alias t="tmux"
-else
-	alias t="echo 'Déjà dans une session tmux'"
-fi
-
-if [ -z "$KITTY_WINDOW_ID" ]; then
-	alias k="kitty --detach && exit"
-else
-	alias k="echo 'Kitty is already running'"
-fi
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-if [[ -f ~/.p10k.zsh ]]; then
-    source ~/.p10k.zsh
-fi
+# ============================================================
+# 4. COULEURS / LS
+# ============================================================
+command -v dircolors >/dev/null 2>&1 && \
+    eval "$(dircolors -b ~/.dircolors 2>/dev/null || dircolors -b)"
 alias ls='ls --color=auto'
+
+# ============================================================
+# 5. ALIASES
+# ============================================================
 alias rm="rm -i"
 alias vim="nvim"
 alias gs="git status"
 alias py="python3"
 alias rpy="rm -rf __pycache__"
 
-DISABLE_AUTO_TITLE="true"
-
-if [ -f "$HOME/francinette/tester.sh" ]; then
-    alias francinette="$HOME/francinette/tester.sh"
-    alias paco="$HOME/francinette/tester.sh"
+if [[ -z "$TMUX" ]]; then
+    alias t="tmux"
+else
+    alias t="echo 'Déjà dans une session tmux'"
 fi
 
-# Competitive Programming
+if [[ -z "$KITTY_WINDOW_ID" ]]; then
+    alias k="kitty --detach && exit"
+else
+    alias k="echo 'Kitty is already running'"
+fi
+
+alias avainfo='~/Documents/Development/AvaInfo/'
+alias pgads='~/Documents/Development/PGADS/'
+alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
+
+[[ -f "$HOME/francinette/tester.sh" ]] && \
+    alias francinette="$HOME/francinette/tester.sh" && \
+    alias paco="$HOME/francinette/tester.sh"
+
+# ============================================================
+# 6. FONCTIONS
+# ============================================================
+c() { cc -Wall -Wextra -Werror "$@" && ./a.out && rm -f a.out }
+val() { cc -Wall -Wextra -Werror "$@" && valgrind ./a.out && rm -f a.out }
+check() { norminette "$@" }
+
+checkp() {
+    echo "[1/4] py_compile..."  && python3 -m py_compile "$@"
+    echo "[2/4] flake8..."      && python3 -m flake8 "$@"
+    echo "[3/4] mypy --strict..." && python3 -m mypy --strict "$@"
+    echo "[4/4] cleaning..."    && rm -rf **/__pycache__
+}
+
+cpi() { g++ -o main "$1" && ./main < input && rm -f main }
+
+mf() {
+    varname=$1; shift
+    echo -n "$varname = " >> Makefile
+    ls "$@" | sed ':a;N;$!ba;s/\n/ \\\n\t/g' >> Makefile
+    echo >> Makefile
+}
+
+studio() {
+    local target="${1:-.}"
+    command -v realpath >/dev/null 2>&1 && target="$(realpath -m -- "$target")"
+    local bin="$HOME/.local/share/JetBrains/Toolbox/apps/android-studio/bin/studio"
+    [[ -f "$bin" ]] && "$bin" "$target" >/dev/null 2>&1 & disown || echo "Android Studio not found."
+}
+
 cpnew() {
     local dest="$PWD/$1"
     mkdir -p "$dest" || return 1
@@ -254,69 +123,17 @@ alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out 
 alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
 
 cfl() {
-    local dir="${1:-.}"
-    local makefile="$dir/Makefile"
-    local output="$dir/compile_flags.txt"
-
-    if [[ ! -f "$makefile" ]]; then
-        echo "cfl: no Makefile found in $dir"
-        return 1
-    fi
-
-    local flags
-
-    flags="$(
-        make -C "$dir" -pn 2>/dev/null \
-        | awk '
-            /^CFLAGS[[:space:]]*[:+?]?=/ {
-                sub(/^CFLAGS[[:space:]]*[:+?]?=[[:space:]]*/, "")
-                print
-                exit
-            }
-        '
-    )"
-
-    if [[ -z "$flags" ]]; then
-        echo "cfl: CFLAGS not found in $makefile"
-        return 1
-    fi
-
-    printf "%s\n" $=flags > "$output"
-
-    echo "cfl: generated $output"
+    local dir="${1:-.}" makefile output flags
+    makefile="$dir/Makefile"; output="$dir/compile_flags.txt"
+    [[ ! -f "$makefile" ]] && echo "cfl: no Makefile found in $dir" && return 1
+    flags="$(make -C "$dir" -pn 2>/dev/null | awk '/^CFLAGS[[:space:]]*[:+?]?=/ { sub(/^CFLAGS[[:space:]]*[:+?]?=[[:space:]]*/, ""); print; exit }')"
+    [[ -z "$flags" ]] && echo "cfl: CFLAGS not found in $makefile" && return 1
+    printf "%s\n" $=flags > "$output" && echo "cfl: generated $output"
 }
 
-# Sync GMK87 keyboard clock
-rlkeyboard() {
-    local repo="$HOME/Downloads/gmk87-node"
-
-    if [ ! -d "$repo" ]; then
-        echo "GMK87 repo not found: $repo"
-        return 1
-    fi
-
-    # Load nvm if available
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-
-    if ! command -v node >/dev/null 2>&1; then
-        echo "Node.js not found. Install/use Node LTS first."
-        return 1
-    fi
-
-    echo "Node: $(node -v)"
-    echo "Syncing GMK87 keyboard time..."
-
-    cd "$repo" || return 1
-
-	sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
-}
-
-# Create a local clang-format configuration using 4-column tab-based indentation
 clg() {
-	local target="${1:-.clang-format}"
-
-	cat > "$target" <<'EOF'
+    local target="${1:-.clang-format}"
+    cat > "$target" <<'EOF'
 BasedOnStyle: LLVM
 IndentWidth: 4
 TabWidth: 4
@@ -324,172 +141,92 @@ UseTab: ForIndentation
 ColumnLimit: 120
 PointerAlignment: Left
 EOF
-
-	echo "clang-format config written to: $PWD/$target"
+    echo "clang-format config written to: $PWD/$target"
 }
 
-# Publish the current Git repository to a remote and push the selected branch.
+rlkeyboard() {
+    local repo="$HOME/Downloads/gmk87-node"
+    [[ ! -d "$repo" ]] && echo "GMK87 repo not found: $repo" && return 1
+    export NVM_DIR="$HOME/.nvm"
+    [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+    command -v node >/dev/null 2>&1 || { echo "Node.js not found."; return 1; }
+    echo "Node: $(node -v)" && echo "Syncing GMK87 keyboard time..."
+    cd "$repo" && sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
+}
+
 gpub() {
-	local url=""
-	local remote="origin"
-	local branch="main"
-	local positional=()
+    local url="" remote="origin" branch="main"
+    local -a positional=()
 
-	gpub_help() {
-		cat <<'EOF'
-Usage:
-  gpub <url>
-  gpub <url> <branch>
-  gpub <url> <remote> <branch>
-
-Options:
-  -u, --url <url>          Remote repository URL
-  -r, --remote <name>      Remote name, default: origin
-  -b, --branch <name>      Branch name, default: main
-  -h, --help               Show this help
-
-Examples:
-  gpub https://github.com/avainfo/42_PythonModule02.git
-  gpub https://github.com/avainfo/42_PythonModule02.git dev
-  gpub https://github.com/avainfo/42_PythonModule02.git upstream dev
-
-  gpub -u https://github.com/avainfo/42_PythonModule02.git
-  gpub -u https://github.com/avainfo/42_PythonModule02.git -b dev
-  gpub -r upstream -b dev -u https://github.com/avainfo/42_PythonModule02.git
+    gpub_help() { cat <<'EOF'
+Usage: gpub <url> [branch]
+       gpub <url> <remote> <branch>
+  -u/--url, -r/--remote, -b/--branch, -h/--help
 EOF
-	}
+    }
 
-	if [ "$#" -eq 0 ]; then
-		gpub_help
-		return 1
-	fi
+    [[ $# -eq 0 ]] && gpub_help && return 1
 
-	while [ "$#" -gt 0 ]; do
-		case "$1" in
-			-h|--help)
-				gpub_help
-				return 0
-				;;
-			-u|--url)
-				if [ -z "${2:-}" ]; then
-					echo "Error: missing value for $1"
-					gpub_help
-					return 1
-				fi
-				url="$2"
-				shift 2
-				;;
-			-r|--remote)
-				if [ -z "${2:-}" ]; then
-					echo "Error: missing value for $1"
-					gpub_help
-					return 1
-				fi
-				remote="$2"
-				shift 2
-				;;
-			-b|--branch)
-				if [ -z "${2:-}" ]; then
-					echo "Error: missing value for $1"
-					gpub_help
-					return 1
-				fi
-				branch="$2"
-				shift 2
-				;;
-			-*)
-				echo "Error: unknown option: $1"
-				gpub_help
-				return 1
-				;;
-			*)
-				positional+=("$1")
-				shift
-				;;
-		esac
-	done
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)  gpub_help; return 0 ;;
+            -u|--url)   url="$2";    shift 2 ;;
+            -r|--remote) remote="$2"; shift 2 ;;
+            -b|--branch) branch="$2"; shift 2 ;;
+            -*)  echo "Error: unknown option: $1"; gpub_help; return 1 ;;
+            *)   positional+=("$1"); shift ;;
+        esac
+    done
 
-	case "${#positional[@]}" in
-		0)
-			# OK only if -u/--url was used.
-			;;
-		1)
-			url="${url:-${positional[1]}}"
-			;;
-		2)
-			url="${url:-${positional[1]}}"
-			branch="${positional[2]}"
-			;;
-		3)
-			url="${url:-${positional[1]}}"
-			remote="${positional[2]}"
-			branch="${positional[3]}"
-			;;
-		*)
-			echo "Error: too many positional arguments"
-			gpub_help
-			return 1
-			;;
-	esac
+    case "${#positional[@]}" in
+        1) url="${url:-${positional[1]}}" ;;
+        2) url="${url:-${positional[1]}}"; branch="${positional[2]}" ;;
+        3) url="${url:-${positional[1]}}"; remote="${positional[2]}"; branch="${positional[3]}" ;;
+        0) ;;
+        *) echo "Error: too many arguments"; gpub_help; return 1 ;;
+    esac
 
-	if [ -z "$url" ]; then
-		echo "Error: remote URL is required"
-		gpub_help
-		return 1
-	fi
+    [[ -z "$url" ]] && echo "Error: URL required" && gpub_help && return 1
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "Error: not in a git repo"; return 1; }
 
-	if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-		echo "Error: not inside a Git repository"
-		return 1
-	fi
+    if git remote get-url "$remote" >/dev/null 2>&1; then
+        local cur; cur="$(git remote get-url "$remote")"
+        [[ "$cur" != "$url" ]] && echo "Error: remote '$remote' exists with different URL: $cur" && return 1
+        echo "Remote '$remote' already correct."
+    else
+        git remote add "$remote" "$url"
+    fi
 
-	if git remote get-url "$remote" >/dev/null 2>&1; then
-		local current_url
-		current_url="$(git remote get-url "$remote")"
-
-		if [ "$current_url" != "$url" ]; then
-			echo "Error: remote '$remote' already exists with a different URL:"
-			echo "  current: $current_url"
-			echo "  wanted:  $url"
-			echo
-			echo "Fix manually with:"
-			echo "  git remote set-url $remote $url"
-			return 1
-		fi
-
-		echo "Remote '$remote' already exists with the correct URL."
-	else
-		git remote add "$remote" "$url"
-	fi
-
-	git branch -M "$branch"
-	git push -u "$remote" "$branch"
+    git branch -M "$branch" && git push -u "$remote" "$branch"
 }
 
-alias avainfo='~/Documents/Development/AvaInfo/'
-alias pgads='~/Documents/Development/PGADS/'
-alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
-
+# ============================================================
+# 7. OUTILS TIERS (nvm, cargo, atuin...)
+# ============================================================
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[[ -s "$NVM_DIR/nvm.sh" ]]          && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 
-# Source optional local configurations if they exist
-if [ -d "$HOME/.config/ava" ]; then
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+[[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
+
+# ============================================================
+# 8. CONFIG LOCALE (.config/ava/*.zsh)
+# ============================================================
+if [[ -d "$HOME/.config/ava" ]]; then
     for conf in "$HOME"/.config/ava/*.zsh(N); do
         source "$conf"
     done
 fi
 
-if [[ -f "$HOME/.atuin/bin/env" ]]; then
-    . "$HOME/.atuin/bin/env"
-fi
+# ============================================================
+# 9. PROMPT / P10K
+# ============================================================
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-
-# Added by Antigravity CLI installer
-export PATH="/home/ava/.local/bin:$PATH"
-
-if command -v atuin >/dev/null 2>&1; then
-    eval "$(atuin init zsh)"
-fi
+# ============================================================
+# 10. WELCOME
+# ============================================================
+command -v figlet >/dev/null 2>&1 && figlet -f standard "Welcome" && figlet -f standard "MR. DO SOUTO"
