@@ -27,9 +27,11 @@ return {
     config = function()
       require("mason-lspconfig").setup({
         ensure_installed = {
-          "basedpyright", -- Python LSP
-          "clangd",       -- C/C++ LSP
-          "ruff",         -- Python linter/formatter
+          "basedpyright",  -- Python LSP
+          "clangd",        -- C/C++ LSP
+          "ruff",          -- Python linter/formatter
+          "rust-analyzer", -- Rust Analyzer
+          "rustfmt",       -- Rust formatter
         },
         automatic_installation = true,
       })
@@ -233,6 +235,7 @@ return {
           python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
           c = { "clang-format" },
           cpp = { "clang-format" },
+		  rust = { "rustfmt" },
         },
         -- format_on_save = {
 			-- lsp_fallback = true,
