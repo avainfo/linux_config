@@ -30,8 +30,6 @@ return {
           "basedpyright",  -- Python LSP
           "clangd",        -- C/C++ LSP
           "ruff",          -- Python linter/formatter
-          "rust-analyzer", -- Rust Analyzer
-          "rustfmt",       -- Rust formatter
         },
         automatic_installation = true,
       })
@@ -48,7 +46,8 @@ return {
           "clangd",
           "basedpyright",
           "ruff",
-          "clang-format", -- For conform.nvim
+          "clang-format",  -- For conform.nvim
+          "rust-analyzer", -- Rust Analyzer
         },
         auto_update = false,
         run_on_start = true,
