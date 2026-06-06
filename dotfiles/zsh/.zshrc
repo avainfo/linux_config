@@ -1,4 +1,9 @@
 # ============================================================
+# 0. WELCOME
+# ============================================================
+command -v figlet >/dev/null 2>&1 && figlet -f standard "Welcome" && figlet -f standard "MR. DO SOUTO"
+
+# ============================================================
 # 1. INSTANT PROMPT (doit rester tout en haut)
 # ============================================================
 [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]] && \
@@ -225,8 +230,3 @@ fi
 # 9. PROMPT / P10K
 # ============================================================
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-
-# ============================================================
-# 10. WELCOME
-# ============================================================
-command -v figlet >/dev/null 2>&1 && figlet -f standard "Welcome" && figlet -f standard "MR. DO SOUTO"
