@@ -363,3 +363,13 @@ vim.keymap.set("i", "<C-x>", function()
     end
   end
 end, { desc = "Debug cmp docs content" })
+
+-- =========================
+-- Python formatting
+-- =========================
+vim.keymap.set("n", "<leader>cp", function()
+	vim.cmd("write")
+	vim.cmd("botright split")
+	vim.cmd("resize 12")
+	vim.cmd("terminal checkp **/*.py")
+end, { desc = "Run checkp on Python files" })

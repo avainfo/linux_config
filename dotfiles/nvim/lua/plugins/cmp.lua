@@ -230,7 +230,7 @@ return {
 
       conform.setup({
         formatters_by_ft = {
-          python = { "ruff_format", "ruff_fix" },
+          python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
           c = { "clang-format" },
           cpp = { "clang-format" },
         },
@@ -295,7 +295,7 @@ return {
           -- Actions
           ["<C-Space>"] = cmp.mapping.complete(),
           ["<C-e>"] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<CR>"] = cmp.mapping.confirm({ select = false }),
 
           -- Tab for navigation + snippets
           ["<Tab>"] = cmp.mapping(function(fallback)
