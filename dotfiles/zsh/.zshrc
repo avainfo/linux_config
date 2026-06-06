@@ -485,6 +485,8 @@ if [[ -f "$HOME/.atuin/bin/env" ]]; then
     . "$HOME/.atuin/bin/env"
 fi
 
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"``
+
 # Added by Antigravity CLI installer
 export PATH="/home/ava/.local/bin:$PATH"
 
