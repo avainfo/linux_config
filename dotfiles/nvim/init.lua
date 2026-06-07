@@ -23,14 +23,14 @@ local function SetStatuslineHighlights()
 end
 
 vim.api.nvim_create_autocmd("ColorScheme", {
-	callback = function ()
+	callback = function()
 		SetStatuslineHighlights()
 		-- CMP floating windows
-        vim.api.nvim_set_hl(0, "CmpNormal",    { bg = "#242438" })
-        vim.api.nvim_set_hl(0, "CmpBorder",    { fg = "#7c6f9f" })
-        vim.api.nvim_set_hl(0, "CmpDocNormal", { bg = "#1e1e2e" })
-        vim.api.nvim_set_hl(0, "CmpDocBorder", { fg = "#585b70" })
-        vim.api.nvim_set_hl(0, "CmpSel",       { bg = "#313244", bold = true })
+		vim.api.nvim_set_hl(0, "CmpNormal", { bg = "#242438" })
+		vim.api.nvim_set_hl(0, "CmpBorder", { fg = "#7c6f9f" })
+		vim.api.nvim_set_hl(0, "CmpDocNormal", { bg = "#1e1e2e" })
+		vim.api.nvim_set_hl(0, "CmpDocBorder", { fg = "#585b70" })
+		vim.api.nvim_set_hl(0, "CmpSel", { bg = "#313244", bold = true })
 	end,
 })
 
@@ -44,23 +44,23 @@ vim.opt.statusline = table.concat({
 })
 
 vim.api.nvim_create_autocmd("User", {
-    pattern = "VeryLazy",
-    callback = function()
-        vim.opt.termguicolors = true
-        vim.opt.background = "dark"
+	pattern = "VeryLazy",
+	callback = function()
+		vim.opt.termguicolors = true
+		vim.opt.background = "dark"
 
-        pcall(vim.cmd, "colorscheme catppuccin")
-        vim.cmd("hi Normal guibg=#1a1a1a")
+		pcall(vim.cmd, "colorscheme catppuccin")
+		vim.cmd("hi Normal guibg=#1a1a1a")
 
-        SetStatuslineHighlights()
+		SetStatuslineHighlights()
 
-        -- CMP floating windows (init au premier démarrage)
-        vim.api.nvim_set_hl(0, "CmpNormal",    { bg = "#242438" })
-        vim.api.nvim_set_hl(0, "CmpBorder",    { fg = "#7c6f9f" })
-        vim.api.nvim_set_hl(0, "CmpDocNormal", { bg = "#1e1e2e" })
-        vim.api.nvim_set_hl(0, "CmpDocBorder", { fg = "#585b70" })
-        vim.api.nvim_set_hl(0, "CmpSel",       { bg = "#313244", bold = true })
-    end,
+		-- CMP floating windows (init au premier démarrage)
+		vim.api.nvim_set_hl(0, "CmpNormal", { bg = "#242438" })
+		vim.api.nvim_set_hl(0, "CmpBorder", { fg = "#7c6f9f" })
+		vim.api.nvim_set_hl(0, "CmpDocNormal", { bg = "#1e1e2e" })
+		vim.api.nvim_set_hl(0, "CmpDocBorder", { fg = "#585b70" })
+		vim.api.nvim_set_hl(0, "CmpSel", { bg = "#313244", bold = true })
+	end,
 })
 
 -- Time Neovim waits for mapped key sequences
@@ -231,17 +231,17 @@ vim.api.nvim_create_user_command("NormToggle", function()
 end, { desc = "Toggle Norminette diagnostics for the current buffer" })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
-    pattern = { "*.c", "*.h" },
-    callback = function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        local path = vim.api.nvim_buf_get_name(bufnr)
+	pattern = { "*.c", "*.h" },
+	callback = function()
+		local bufnr = vim.api.nvim_get_current_buf()
+		local path = vim.api.nvim_buf_get_name(bufnr)
 
-        if path:match("/42/") then
-            vim.b[bufnr].norminette_disabled = false
-        else
-            vim.b[bufnr].norminette_disabled = true
-        end
-    end,
+		if path:match("/42/") then
+			vim.b[bufnr].norminette_disabled = false
+		else
+			vim.b[bufnr].norminette_disabled = true
+		end
+	end,
 })
 
 vim.keymap.set("n", "<Space>nt", "<cmd>NormToggle<CR>", {
@@ -309,22 +309,22 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "c", "cpp" },
-  callback = function()
-    if vim.bo.modifiable then
-      vim.opt_local.comments = "sl:/*,mb:\\ *,elx:\\ *"
-    end
-  end,
+	pattern = { "c", "cpp" },
+	callback = function()
+		if vim.bo.modifiable then
+			vim.opt_local.comments = "sl:/*,mb:\\ *,elx:\\ *"
+		end
+	end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "gitcommit",
-    callback = function()
-        vim.opt_local.textwidth = 72
-        vim.opt_local.colorcolumn = "51,73"
-        vim.opt_local.spell = true
-        vim.opt_local.wrap = true
-    end,
+	pattern = "gitcommit",
+	callback = function()
+		vim.opt_local.textwidth = 72
+		vim.opt_local.colorcolumn = "51,73"
+		vim.opt_local.spell = true
+		vim.opt_local.wrap = true
+	end,
 })
 
 -- Telescope keymaps are in lua/plugins/telescope.lua
@@ -363,20 +363,20 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: 
 -- vim.keymap.set({ "n", "i", "v" }, "<Right>", "<Nop>", { noremap = true, silent = true })
 
 vim.keymap.set("i", "<C-x>", function()
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    local buf = vim.api.nvim_win_get_buf(win)
-    local ft = vim.bo[buf].filetype
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		local ft = vim.bo[buf].filetype
 
-    if ft == "cmp_docs" then
-      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		if ft == "cmp_docs" then
+			local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 
-      vim.notify(
-        "CMP DOCS CONTENT:\n\n" .. table.concat(lines, "\n"),
-        vim.log.levels.INFO,
-        { title = "cmp_docs debug" }
-      )
-    end
-  end
+			vim.notify(
+				"CMP DOCS CONTENT:\n\n" .. table.concat(lines, "\n"),
+				vim.log.levels.INFO,
+				{ title = "cmp_docs debug" }
+			)
+		end
+	end
 end, { desc = "Debug cmp docs content" })
 
 -- =========================
