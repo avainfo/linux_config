@@ -148,36 +148,40 @@ local function NorminetteCheck()
 		stdout_buffered = true,
 		on_stdout = function(_, data)
 			vim.diagnostic.reset(ns, bufnr)
-			if not data or #data == 0 then return end
+			if not data or #data == 0 then
+				return
+			end
 
 			local diags = {}
 			for _, raw in ipairs(data) do
 				local line = (raw or ""):gsub("\27%[[0-9;]*m", "")
 				if line ~= "" then
-					if line:match("^%s*Setting locale")
+					if
+						line:match("^%s*Setting locale")
 						or line:match("^%s*Diagnostics:?")
-						or line:match("^%s*[%w%._%-/]+:%s*Error!?%s*$") then
+						or line:match("^%s*[%w%._%-/]+:%s*Error!?%s*$")
+					then
 						-- skip
 					else
 						local rule, lnum, col, msg =
 							line:match("^%s*Error:%s*([%w_%-%./]+)%s*%(%s*line:%s*(%d+),%s*col:%s*(%d+)%s*%):%s*(.+)")
 						if lnum and col and msg then
 							table.insert(diags, {
-								lnum     = tonumber(lnum) - 1,
-								col      = tonumber(col) - 1,
+								lnum = tonumber(lnum) - 1,
+								col = tonumber(col) - 1,
 								severity = vim.diagnostic.severity.ERROR,
-								message  = (rule and (rule .. ": ") or "") .. msg,
-								source   = "norminette",
+								message = (rule and (rule .. ": ") or "") .. msg,
+								source = "norminette",
 							})
 						else
 							local l2, c2, m2 = line:match(":%s*(%d+):%s*(%d+):%s*Error:%s*(.+)")
 							if l2 and c2 and m2 then
 								table.insert(diags, {
-									lnum     = tonumber(l2) - 1,
-									col      = tonumber(c2) - 1,
+									lnum = tonumber(l2) - 1,
+									col = tonumber(c2) - 1,
 									severity = vim.diagnostic.severity.ERROR,
-									message  = m2,
-									source   = "norminette",
+									message = m2,
+									source = "norminette",
 								})
 							end
 						end
@@ -305,7 +309,9 @@ end, { desc = "Show diagnostics at cursor" })
 
 vim.api.nvim_create_autocmd("BufWritePost", {
 	pattern = { "*.c", "*.h" },
-	callback = function(args) NorminetteCheck() end,
+	callback = function(args)
+		NorminetteCheck()
+	end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {

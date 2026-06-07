@@ -64,10 +64,8 @@ local function doxygen_to_markdown_lines(lines)
 		local line = clean_doxygen_line(raw_line)
 
 		local brief_text = line:match("^[@\\]brief%s+(.+)")
-		local param_name_with_dir, param_text_with_dir =
-			line:match("^[@\\]param%s+%b[]%s*([%w_]+)%s+(.+)")
-		local param_name, param_text =
-			line:match("^[@\\]param%s+([%w_]+)%s+(.+)")
+		local param_name_with_dir, param_text_with_dir = line:match("^[@\\]param%s+%b[]%s*([%w_]+)%s+(.+)")
+		local param_name, param_text = line:match("^[@\\]param%s+([%w_]+)%s+(.+)")
 		local return_text = line:match("^[@\\]return%s+(.+)")
 		local retval_text = line:match("^[@\\]retval%s+(.+)")
 
@@ -148,10 +146,12 @@ function Entry:get_documentation()
 
 	local joined = table.concat(docs, "\n")
 
-	if joined:match("[@\\]brief")
+	if
+		joined:match("[@\\]brief")
 		or joined:match("[@\\]param")
 		or joined:match("[@\\]return")
-		or joined:match("[@\\]retval") then
+		or joined:match("[@\\]retval")
+	then
 		return doxygen_to_markdown_lines(docs)
 	end
 

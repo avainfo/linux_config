@@ -4,10 +4,7 @@
 local M = {}
 
 local function compile(file, out)
-	local cmd = string.format(
-		"g++ -std=c++20 -O2 -Wall -Wextra -fsanitize=address,undefined -o %s %s 2>&1",
-		out, file
-	)
+	local cmd = string.format("g++ -std=c++20 -O2 -Wall -Wextra -fsanitize=address,undefined -o %s %s 2>&1", out, file)
 	return cmd
 end
 
@@ -53,7 +50,9 @@ function M.run()
 	local out = file:gsub("%.cpp$", "")
 	local cmd = string.format(
 		"g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o %s %s && echo '─── Running ───' && { time %s ; }",
-		out, file, out
+		out,
+		file,
+		out
 	)
 	run_in_split("bash -c " .. vim.fn.shellescape(cmd))
 end
@@ -65,9 +64,9 @@ function M.run_with_input()
 		return
 	end
 	vim.cmd("write")
-	local out  = file:gsub("%.cpp$", "")
-	local dir  = vim.fn.fnamemodify(file, ":h")
-	local inp  = dir .. "/input.txt"
+	local out = file:gsub("%.cpp$", "")
+	local dir = vim.fn.fnamemodify(file, ":h")
+	local inp = dir .. "/input.txt"
 	local outp = dir .. "/output.txt"
 
 	local redirect
@@ -81,7 +80,10 @@ function M.run_with_input()
 
 	local cmd = string.format(
 		"g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o %s %s && echo '─── Running ───' && { time %s %s ; }",
-		out, file, out, redirect
+		out,
+		file,
+		out,
+		redirect
 	)
 	run_in_split("bash -c " .. vim.fn.shellescape(cmd))
 end

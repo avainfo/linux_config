@@ -13,7 +13,7 @@ return {
 					icons = {
 						package_installed = "✓",
 						package_pending = "➜",
-						package_uninstalled = "✗"
+						package_uninstalled = "✗",
 					},
 				},
 			})
@@ -107,7 +107,7 @@ return {
 
 			if use_new_api then
 				-- Neovim 0.11+ API
-				vim.lsp.config('clangd', {
+				vim.lsp.config("clangd", {
 					capabilities = (function()
 						local c = vim.tbl_deep_extend("force", {}, capabilities)
 						c.offsetEncoding = { "utf-16" }
@@ -124,7 +124,7 @@ return {
 					},
 				})
 
-				vim.lsp.config('basedpyright', {
+				vim.lsp.config("basedpyright", {
 					capabilities = capabilities,
 					on_attach = on_attach,
 					settings = {
@@ -139,7 +139,7 @@ return {
 					},
 				})
 
-				vim.lsp.config('ruff', {
+				vim.lsp.config("ruff", {
 					capabilities = capabilities,
 					on_attach = function(client, bufnr)
 						client.server_capabilities.hoverProvider = false
@@ -148,9 +148,9 @@ return {
 				})
 
 				-- Enable LSP
-				vim.lsp.enable('clangd')
-				vim.lsp.enable('basedpyright')
-				vim.lsp.enable('ruff')
+				vim.lsp.enable("clangd")
+				vim.lsp.enable("basedpyright")
+				vim.lsp.enable("ruff")
 			else
 				-- Neovim < 0.11 API
 				local lspconfig = require("lspconfig")
@@ -233,10 +233,10 @@ return {
 			conform.setup({
 				formatters_by_ft = {
 					python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
-					c      = { "clang-format" },
-					cpp    = { "clang-format" },
-					rust   = { "rustfmt" },
-					lua    = { "stylua" },
+					c = { "clang-format" },
+					cpp = { "clang-format" },
+					rust = { "rustfmt" },
+					lua = { "stylua" },
 				},
 				-- format_on_save = {
 				-- lsp_fallback = true,
@@ -326,8 +326,8 @@ return {
 				-- Sources (order = priority)
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp", priority = 1000 },
-					{ name = "luasnip",  priority = 750 },
-					{ name = "path",     priority = 500 },
+					{ name = "luasnip", priority = 750 },
+					{ name = "path", priority = 500 },
 				}, {
 					{ name = "buffer", priority = 250 },
 				}),
@@ -368,18 +368,18 @@ return {
 			cmp.setup.cmdline("/", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = {
-					{ name = "buffer" }
-				}
+					{ name = "buffer" },
+				},
 			})
 
 			-- Command line completion ':'
 			cmp.setup.cmdline(":", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({
-					{ name = "path" }
+					{ name = "path" },
 				}, {
-					{ name = "cmdline" }
-				})
+					{ name = "cmdline" },
+				}),
 			})
 		end,
 	},

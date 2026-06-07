@@ -18,12 +18,15 @@ return {
 						vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 						vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 						-- Rust-specific
-						vim.keymap.set("n", "<leader>rr", function() vim.cmd("RustLsp runnables") end,
-							{ buffer = bufnr, desc = "Rust: runnables" })
-						vim.keymap.set("n", "<leader>re", function() vim.cmd("RustLsp expandMacro") end,
-							{ buffer = bufnr, desc = "Rust: expand macro" })
-						vim.keymap.set("n", "<leader>rc", function() vim.cmd("RustLsp openCargo") end,
-							{ buffer = bufnr, desc = "Rust: open Cargo.toml" })
+						vim.keymap.set("n", "<leader>rr", function()
+							vim.cmd("RustLsp runnables")
+						end, { buffer = bufnr, desc = "Rust: runnables" })
+						vim.keymap.set("n", "<leader>re", function()
+							vim.cmd("RustLsp expandMacro")
+						end, { buffer = bufnr, desc = "Rust: expand macro" })
+						vim.keymap.set("n", "<leader>rc", function()
+							vim.cmd("RustLsp openCargo")
+						end, { buffer = bufnr, desc = "Rust: open Cargo.toml" })
 					end,
 					settings = {
 						["rust-analyzer"] = {
