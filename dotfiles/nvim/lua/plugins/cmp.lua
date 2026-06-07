@@ -48,6 +48,7 @@ return {
 					"ruff",
 					"clang-format", -- For conform.nvim
 					"rust-analyzer", -- Rust Analyzer
+					"stylua", -- Lua formatter
 				},
 				auto_update = false,
 				run_on_start = true,
@@ -232,9 +233,10 @@ return {
 			conform.setup({
 				formatters_by_ft = {
 					python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
-					c = { "clang-format" },
-					cpp = { "clang-format" },
-					rust = { "rustfmt" },
+					c      = { "clang-format" },
+					cpp    = { "clang-format" },
+					rust   = { "rustfmt" },
+					lua    = { "stylua" },
 				},
 				-- format_on_save = {
 				-- lsp_fallback = true,

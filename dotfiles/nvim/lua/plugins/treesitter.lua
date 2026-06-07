@@ -14,7 +14,6 @@ return {
 					"json",
 					"lua",
 					"markdown",
-					"markdown",
 					"markdown_inline",
 					"python",
 					"query",
