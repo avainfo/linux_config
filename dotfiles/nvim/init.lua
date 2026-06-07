@@ -23,7 +23,15 @@ local function SetStatuslineHighlights()
 end
 
 vim.api.nvim_create_autocmd("ColorScheme", {
-	callback = SetStatuslineHighlights,
+	callback = function ()
+		SetStatuslineHighlights()
+		-- CMP floating windows
+        vim.api.nvim_set_hl(0, "CmpNormal",    { bg = "#242438" })
+        vim.api.nvim_set_hl(0, "CmpBorder",    { fg = "#7c6f9f" })
+        vim.api.nvim_set_hl(0, "CmpDocNormal", { bg = "#1e1e2e" })
+        vim.api.nvim_set_hl(0, "CmpDocBorder", { fg = "#585b70" })
+        vim.api.nvim_set_hl(0, "CmpSel",       { bg = "#313244", bold = true })
+	end,
 })
 
 vim.opt.statusline = table.concat({
@@ -36,16 +44,23 @@ vim.opt.statusline = table.concat({
 })
 
 vim.api.nvim_create_autocmd("User", {
-	pattern = "VeryLazy",
-	callback = function()
-		vim.opt.termguicolors = true
-		vim.opt.background = "dark"
+    pattern = "VeryLazy",
+    callback = function()
+        vim.opt.termguicolors = true
+        vim.opt.background = "dark"
 
-		pcall(vim.cmd, "colorscheme catppuccin")
-		vim.cmd("hi Normal guibg=#1a1a1a")
+        pcall(vim.cmd, "colorscheme catppuccin")
+        vim.cmd("hi Normal guibg=#1a1a1a")
 
-		SetStatuslineHighlights()
-	end,
+        SetStatuslineHighlights()
+
+        -- CMP floating windows (init au premier démarrage)
+        vim.api.nvim_set_hl(0, "CmpNormal",    { bg = "#242438" })
+        vim.api.nvim_set_hl(0, "CmpBorder",    { fg = "#7c6f9f" })
+        vim.api.nvim_set_hl(0, "CmpDocNormal", { bg = "#1e1e2e" })
+        vim.api.nvim_set_hl(0, "CmpDocBorder", { fg = "#585b70" })
+        vim.api.nvim_set_hl(0, "CmpSel",       { bg = "#313244", bold = true })
+    end,
 })
 
 -- Time Neovim waits for mapped key sequences

@@ -342,9 +342,17 @@ return {
 
         -- Windows with borders
 		window = {
-			completion = cmp.config.window.bordered(),
+			completion = cmp.config.window.bordered({
+				border = "rounded",
+				winhighlight = "Normal:CmpNormal,FloatBorder:CmpBorder,CursorLine:CmpSel,Search:None",
+				scrollbar = false,
+				col_offset = -3,
+				side_padding = 1,
+			}),
 			documentation = cmp.config.window.bordered({
-				winhighlight = "normal:normal,floatborder:floatborder,cursorline:visual,search:none",
+				border = "rounded",
+				winhighlight = "Normal:CmpDocNormal,FloatBorder:CmpDocBorder,CursorLine:CmpSel,Search:None",
+				scrollbar = true,
 			}),
 		},
 
