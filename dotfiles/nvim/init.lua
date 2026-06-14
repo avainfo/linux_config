@@ -356,7 +356,7 @@ vim.keymap.set("n", "<F8>", cp.open_input, { desc = "CP: open input.txt" })
 vim.keymap.set("n", "<Space>ct", cp.load_template, { desc = "CP: load template" })
 
 -- Quit terminal with Escape
-vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: normal mode" })
+vim.keymap.set("t", "<C-q>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: normal mode" })
 
 -- Yank to system clipboard with y+
 -- vim.keymap.set({ "n", "x" }, "y+", '"+y', {
