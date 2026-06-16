@@ -119,6 +119,14 @@ vim.keymap.set("n", "<C-Right>", "w", { noremap = true })
 vim.keymap.set("i", "<C-Left>", "<C-o>b", { noremap = true })
 vim.keymap.set("i", "<C-Right>", "<C-o>w", { noremap = true })
 
+-- Ctrl + Delete
+vim.keymap.set("n", "<C-Del>", "dw",   { noremap = true, silent = true })
+vim.keymap.set("i", "<C-Del>", "<C-o>dw", { noremap = true, silent = true })
+
+-- Ctrl + Backspace
+vim.keymap.set("n", "<C-h>", "db", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-h>", "<C-o>db", { noremap = true, silent = true })
+
 -- =========================
 -- Norminette (Native Diagnostics)
 -- =========================
