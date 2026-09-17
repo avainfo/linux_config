@@ -18,8 +18,8 @@ path=(
     $HOME/.local/kitty.app/bin
     $HOME/bin
     $HOME/bin/jetbrains
-    $HOME/srcs/flutter/bin
-    $HOME/srcs/cmdline-tools/bin
+    $HOME/tools/sdk/flutter/bin
+    $HOME/Android/Sdk/cmdline-tools/latest/bin
     $HOME/.pub-cache/bin
     $path
 )
@@ -66,6 +66,14 @@ alias vim="nvim"
 alias gs="git status"
 alias py="python3"
 alias rpy="rm -rf __pycache__"
+alias dev="cd ~/Documents/Development/"
+
+alias ccode='cd ~/code'
+alias c42='cd ~/code/42'
+alias cpgads='cd ~/code/pgads'
+alias cpersonal='cd ~/code/personal'
+alias coss='cd ~/code/open-source'
+alias clabs='cd ~/code/labs'
 
 if [[ -z "$TMUX" ]]; then
     alias t="tmux"
@@ -83,9 +91,9 @@ alias avainfo='~/Documents/Development/AvaInfo/'
 alias pgads='~/Documents/Development/PGADS/'
 alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
 
-[[ -f "$HOME/francinette/tester.sh" ]] && \
-    alias francinette="$HOME/francinette/tester.sh" && \
-    alias paco="$HOME/francinette/tester.sh"
+[[ -f "$HOME/tools/francinette/tester.sh" ]] && \
+    alias francinette="$HOME/tools/francinette/tester.sh" && \
+    alias paco="$HOME/tools/francinette/tester.sh"
 
 # ============================================================
 # 6. FONCTIONS
@@ -150,7 +158,7 @@ EOF
 }
 
 rlkeyboard() {
-    local repo="$HOME/Downloads/gmk87-node"
+    local repo="$HOME/tools/sources/gmk87-node"
     [[ ! -d "$repo" ]] && echo "GMK87 repo not found: $repo" && return 1
     export NVM_DIR="$HOME/.nvm"
     [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
