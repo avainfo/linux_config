@@ -1,73 +1,46 @@
-⚙️ Dotfiles Configuration Summary
+Workstation Configuration Summary
 
-🖥️ Terminal (Kitty)
-- Kitty installed in user-space (~/kitty.app/bin/kitty) for 42.
-- Config file: ~/.config/kitty/kitty.conf
-- Settings:
-  * JetBrainsMono Nerd Font
-  * Dark background (#1a1a1a)
-  * Transparency (background_opacity 0.92)
-  * Block cursor
-  * Adjusted color palette
+Bootstrap
+- Single entrypoint: ./install.sh
+- Modes: --full, --user-only, --system-only, --root-dotfiles
+- Optional: --docker, --no-system, --dry-run
+- Do not run install.sh itself with sudo; privileged steps call sudo internally.
 
-🐚 Zsh + Oh My Zsh
-- Oh My Zsh installed (~/.oh-my-zsh/)
-- Zsh set as default shell
-- Plugins installed via script (ohmyzsh-plugins/install-plugins.sh):
-  * zsh-autosuggestions
-  * zsh-syntax-highlighting
-- Current prompt based on Powerlevel10k with experiments on a custom prompt:
-  * 2 lines with symbols ╭─ and ╰─
-  * Git info: branch + commits ahead/behind + modified/staged/conflicted files
-  * Logical colors (green = success, red = error, cyan = info, yellow = changes)
+42 workstations
+- Detected from the mounted /goinfre filesystem and writable ~/goinfre, never from a username.
+- Neovim cache/state/data are redirected to ~/goinfre/nvim.
+- ~/.config/nvim remains the portable tracked configuration.
+- Project-specific uv/Hugging Face environments are intentionally not exported globally.
 
-🪟 Tmux
-- Config file: ~/.tmux.conf
-  * Truecolor enabled (tmux-256color + :RGB)
-  * Mouse enabled (selection, scroll, resize, clicks)
-  * Vi copy mode (v to select, y to copy)
-  * Quick splits (| horizontal, - vertical)
-  * Reload config (prefix + r)
-  * Custom status bar (session on the left, time/date on the right)
-  * Custom pane-border-format (tests with b:pane_current_path, $HOME conditions, special display for ava)
+Terminal / shell
+- Kitty config: ~/.config/kitty/kitty.conf
+- Zsh config: ~/.zshrc
+- Powerlevel10k config: ~/.p10k.zsh
+- Oh My Zsh, Powerlevel10k and shell plugins are installed/updated by the main bootstrap.
 
-✏️ Vim
-- Config file: ~/.vimrc
-  * Line numbers + relative line numbers
-  * Indentation: 4 spaces
-  * termguicolors enabled
-  * Syntax highlighting enabled
-  * System clipboard enabled
+Editors
+- Vim config: ~/.vimrc
+- Neovim config: ~/.config/nvim
+- Neovim plugins are managed with lazy.nvim.
+- clangd config: ~/.config/clangd/config.yaml
 
-🌀 Git
-- Config file: ~/.gitconfig
-  * Name + email set
-  * Aliases (st, lg, co, ci)
-  * Push = current branch by default
-  * Colors enabled
-- gh (GitHub CLI) installed and used for simplified authentication
+Tmux
+- Config: ~/.tmux.conf
+- Truecolor, mouse support, vi copy mode, fast splits and custom status/pane formatting.
 
-🎨 LS_COLORS & dircolors
-- LS_COLORS check: executables = light green (01;32)
-- Customization planned via ~/.dircolors:
-  * EXEC in bright cyan or turquoise
-  * OTHER_WRITABLE (e.g., gcc_64) in magenta or orange
-  * STICKY_OTHER_WRITABLE (e.g., /tmp) in red
+Git
+- Config: ~/.gitconfig
+- User identity, aliases, push defaults and colors are tracked.
 
-🛠 Bin / scripts
-- ~/bin added to PATH
-- Planned for utility scripts:
-  * build: compile + run
-  * runv: run under valgrind
-  * mkproj: C project skeleton
+Debugging / reliability
+- GDB config: ~/.gdbinit
+- Main bootstrap can install GDB, LLDB, Valgrind, strace, ltrace, coredump tooling, stress tools and tracing/network diagnostics.
+- Linux system tuning is applied with drop-ins under /etc/systemd/*conf.d and /etc/sysctl.d.
 
-🔒 Debug
-- ~/.gdbinit:
-  * Pagination off
-  * Pretty print enabled
-  * Quick backtrace (bt10)
-  * Breakpoints pending on
+Scripts
+- Repository scripts and dotfiles/bin helpers are linked into ~/bin.
+- Nested directories such as ~/bin/jetbrains are preserved.
 
-📐 Formatting files
-- .editorconfig: 4-space indentation, LF, max line length 80
-- .clang-format: style close to 42 norm (LLVM base, 4-space indent, column max 80, no tabs)
+Backups
+- Conflicting user configuration can be backed up under ~/.config/ava/backups/<timestamp>/ before replacement.
+- Root dotfiles are copied, not symlinked to a user-owned checkout.
