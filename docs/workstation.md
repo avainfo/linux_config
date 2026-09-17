@@ -1,49 +1,69 @@
 # Workstation Philosophy
 
-This repository keeps one portable development environment for Pop!_OS, Ubuntu, Debian-based systems, WSL, and user-level dotfiles on macOS.
+This repository is designed to turn a fresh Pop!_OS, Ubuntu, or Debian-based installation into a capable Linux development and debugging environment while keeping the same user configuration portable to more restricted machines.
 
-## One bootstrap, passive configuration
+## One Bootstrap
 
-The root `install.sh` is the only installation entrypoint.
+The repository has a single installation entrypoint:
 
-Everything else has a narrower responsibility:
+```bash
+bash install.sh [options]
+```
 
-- `dotfiles/` contains configuration that is linked into the user environment
-- `system/` contains Linux drop-in files that the bootstrap copies into `/etc`
-- `scripts/` contains daily engineering helpers linked into `~/bin`
-- `docs/` documents workflows and recovery
+The rest of the repository is data and runtime configuration:
 
-This avoids having multiple partially overlapping installers whose behavior drifts over time.
+- `dotfiles/` contains tracked user configuration
+- `scripts/` contains runtime/debugging commands
+- `system/` contains systemd and sysctl drop-ins
+- `docs/` contains documentation
 
-## Installation layers
+This avoids installer logic drifting between multiple nested scripts.
 
-The bootstrap still keeps logical layers internally:
+## Capability-Based Behavior
 
-- **Base**: standard CLI tools such as Git, curl, fzf, tmux, Zsh and Neovim
-- **Development**: C/C++ compilers, CMake, Ninja, clangd, GDB, LLDB, Bear and Cppcheck
-- **Reliability**: Valgrind, strace, coredumps, tracing, stress and network diagnostics
-- **Desktop**: Kitty and clipboard helpers when a desktop environment is relevant
-- **Docker**: optional installation from Docker's official package repository
-- **User**: shell plugins, fonts, dotfile links and Neovim plugin bootstrap
+The bootstrap adapts to the environment rather than hardcoding a specific username or hostname.
 
-The implementation is centralized, but the responsibilities remain explicit.
+For example, a 42 workstation is detected from the real `/goinfre` mount plus a writable `~/goinfre` directory.
 
-## Environment-specific behavior
+When that environment is detected:
 
-Machine-specific policy should be detected from machine capabilities, not usernames or hardcoded hostnames.
+- user configuration remains available
+- Neovim runtime/cache data is moved out of the small home quota into `~/goinfre/nvim`
+- system package installation, Docker setup, and root configuration are blocked by default
+- `--full` safely degrades to the user-only path
+- an explicit `--force-system` is required to override the guard
 
-For example, a 42 workstation is identified by the mounted `/goinfre` filesystem and a writable `$HOME/goinfre`. In that environment, Neovim's disposable cache, data and state are redirected to `goinfre`, while the tracked config stays in the normal XDG config path.
+Project-specific environment variables such as `UV_PROJECT_ENVIRONMENT`, `UV_CACHE_DIR`, and `HF_HOME` are intentionally not exported from the global shell configuration. They belong to the relevant project or project Makefile.
 
-Project-specific environments are intentionally excluded from global shell policy. A Python project that wants its uv cache or virtualenv in `goinfre` should configure that locally instead of exporting a global `UV_PROJECT_ENVIRONMENT`.
+## Base OS
 
-## Safety and idempotence
+The full system setup is primarily designed for:
 
-The installer is designed to be rerun safely:
+- Pop!_OS 22.04+
+- Ubuntu
+- Debian-based Linux systems
 
-- `--dry-run` previews operations
-- existing personal config is not overwritten silently
-- identical files can become symlinks automatically
-- conflicts can be inspected with `diff`
-- replacements are backed up under `~/.config/ava/backups/`
-- root config is copied rather than linked to a user checkout
-- Linux system settings use drop-in files rather than replacing distribution defaults
+The user-level dotfiles are more portable and can also be used on restricted/shared systems.
+
+## Components
+
+The single bootstrap internally groups the setup into logical components:
+
+- **Base**: standard CLI tools such as git, curl, fzf, tmux, zsh, and Neovim
+- **Dev Tools**: C/C++ build systems, compilers, Clang tooling, GDB, LLDB, Bear, and Cppcheck
+- **Embedded Reliability**: diagnostics and analysis tooling such as Valgrind, strace, coredump tooling, stress-ng, and tracing utilities
+- **Desktop**: Kitty, fonts, and clipboard utilities when applicable
+- **Docker**: optional Docker Engine installation from the official repository
+- **User Environment**: shell dependencies, dotfile links, and Neovim bootstrap
+
+## Safety and Idempotence
+
+The installer is intended to be run repeatedly without blindly replacing local state.
+
+- `--dry-run` previews changes
+- conflicting user configuration is surfaced interactively
+- identical local files can be replaced with repository symlinks
+- backups are stored under `~/.config/ava/backups/`
+- system configuration uses drop-in directories instead of replacing distribution defaults
+- the main script refuses to run directly as root
+- managed 42 workstations block system-level changes unless explicitly overridden
