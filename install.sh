@@ -7,6 +7,7 @@ TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_DIR="$HOME/.config/ava/backups/$TIMESTAMP"
 
 DRY_RUN=0
+FORCE_SYSTEM=0
 MODE_FULL=0
 MODE_USER=0
 MODE_SYSTEM=0
@@ -37,6 +38,7 @@ Modes:
 Options:
   --docker          Install Docker Engine on supported apt-based Linux systems
   --no-system       Skip journald, coredump and sysctl drop-ins
+  --force-system    Allow system/root changes on managed 42 workstations
   --dry-run         Preview changes without modifying the machine
   --help            Show this help
 
@@ -46,6 +48,9 @@ Examples:
   bash install.sh --system-only --no-system
   bash install.sh --full --docker
   bash install.sh --root-dotfiles
+
+On a 42 workstation, system/root changes are blocked by default. A plain
+`bash install.sh` automatically degrades to the safe user-only path.
 EOF
 }
 
@@ -70,6 +75,7 @@ while [[ $# -gt 0 ]]; do
         --root-dotfiles) MODE_ROOT_DOTFILES=1 ;;
         --docker) MODE_DOCKER=1 ;;
         --no-system) MODE_NO_SYSTEM=1 ;;
+        --force-system) FORCE_SYSTEM=1 ;;
         --dry-run) DRY_RUN=1 ;;
         --help|-h) show_help; exit 0 ;;
         *) echo "Unknown option: $1" >&2; show_help >&2; exit 1 ;;
@@ -109,6 +115,32 @@ is_42_workstation() {
     command_exists mountpoint || return 1
     mountpoint -q /goinfre 2>/dev/null
 }
+
+guard_42_system_changes() {
+    if ! is_42_workstation || [[ $FORCE_SYSTEM -eq 1 ]]; then
+        return 0
+    fi
+
+    if [[ $MODE_SYSTEM -eq 0 && $MODE_DOCKER -eq 0 && $MODE_ROOT_DOTFILES -eq 0 ]]; then
+        return 0
+    fi
+
+    if [[ $MODE_FULL -eq 1 ]]; then
+        warn "42 workstation detected: system, Docker and root changes are disabled by default."
+        info "Continuing with the user-only setup. Use --force-system only if you intentionally want system changes."
+        MODE_SYSTEM=0
+        MODE_DOCKER=0
+        MODE_ROOT_DOTFILES=0
+        MODE_NO_SYSTEM=1
+        return 0
+    fi
+
+    warn "42 workstation detected: refusing system/root changes on a managed workstation."
+    warn "Use --force-system only if you intentionally want to override this safety guard."
+    exit 2
+}
+
+guard_42_system_changes
 
 apt_available() {
     [[ "$OS" == "Linux" ]] && command_exists apt-get && command_exists apt-cache
@@ -155,20 +187,28 @@ install_system_packages() {
 
     log ">> Installing base packages..."
     run sudo apt-get install -y "${base_packages[@]}"
-    SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+    if [[ $DRY_RUN -eq 0 ]]; then
+        SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+    fi
 
     log ">> Installing development tools..."
     run sudo apt-get install -y "${dev_packages[@]}"
-    SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+    if [[ $DRY_RUN -eq 0 ]]; then
+        SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+    fi
 
     log ">> Installing reliability and diagnostics tools..."
     run sudo apt-get install -y "${reliability_packages[@]}"
-    SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+    if [[ $DRY_RUN -eq 0 ]]; then
+        SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+    fi
 
     if [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]] || [[ ! -e /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
         log ">> Installing desktop tools..."
         run sudo apt-get install -y "${desktop_packages[@]}"
-        SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+        if [[ $DRY_RUN -eq 0 ]]; then
+            SUM_SYS_GROUPS=$((SUM_SYS_GROUPS + 1))
+        fi
     else
         info "WSL detected without a Linux desktop session. Skipping desktop packages."
     fi
@@ -204,7 +244,6 @@ install_docker() {
 
     if [[ $DRY_RUN -eq 1 ]]; then
         info "Would install Docker GPG key, repository and Engine packages."
-        SUM_DOCKER=1
         return 0
     fi
 
@@ -618,7 +657,9 @@ install_root_dotfiles() {
         run sudo chsh -s "$(command -v zsh)" root
     fi
 
-    SUM_ROOT_DOTFILES=1
+    if [[ $DRY_RUN -eq 0 ]]; then
+        SUM_ROOT_DOTFILES=1
+    fi
 }
 
 print_summary() {
@@ -638,6 +679,9 @@ print_summary() {
 ======================================
 EOF
 
+    if [[ $DRY_RUN -eq 1 ]]; then
+        info "Dry-run counters show applied changes only; planned actions are listed above."
+    fi
     if is_42_workstation; then
         info "42 workstation detected: Neovim cache/state/data use ~/goinfre/nvim."
     fi
