@@ -6,3 +6,10 @@ traces/
 *.core
 core
 core.*
+
+# Local/editor backups
+*.bak
+*.OLD
+*~
+*.swp
+*.swo
