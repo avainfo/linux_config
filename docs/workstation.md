@@ -1,23 +1,49 @@
 # Workstation Philosophy
 
-This repository is designed to turn a fresh installation of Pop!_OS, Ubuntu, or Debian into a fully capable development environment quickly and reproducibly.
+This repository keeps one portable development environment for Pop!_OS, Ubuntu, Debian-based systems, WSL, and user-level dotfiles on macOS.
 
-## Base OS
+## One bootstrap, passive configuration
 
-The setup is heavily tested on **Pop!_OS 22.04+** and **Ubuntu**, taking advantage of the `apt` ecosystem.
+The root `install.sh` is the only installation entrypoint.
 
-## Modularity
+Everything else has a narrower responsibility:
 
-The configuration is split into distinct components:
-- **Base**: Standard CLI tools (git, curl, fzf, tmux, zsh, neovim).
-- **Dev Tools**: C/C++ build systems and compilers (cmake, gcc, clang, gdb).
-- **Embedded Reliability**: Diagnostics and analysis tools (valgrind, strace, coredumpctl).
-- **Desktop**: Terminal emulator (kitty) and clipboard utilities.
-- **Docker**: Containerization using the official Docker APT repository.
+- `dotfiles/` contains configuration that is linked into the user environment
+- `system/` contains Linux drop-in files that the bootstrap copies into `/etc`
+- `scripts/` contains daily engineering helpers linked into `~/bin`
+- `docs/` documents workflows and recovery
 
-## Safety and Idempotence
+This avoids having multiple partially overlapping installers whose behavior drifts over time.
 
-The installer script (`install.sh`) is built to be run multiple times safely.
-- It will not overwrite your existing personal configuration blindly.
-- It uses systemd drop-in configuration (`/etc/systemd/*.conf.d/`) to avoid clashing with distribution defaults.
-- It provides a `--dry-run` flag so you can preview changes.
+## Installation layers
+
+The bootstrap still keeps logical layers internally:
+
+- **Base**: standard CLI tools such as Git, curl, fzf, tmux, Zsh and Neovim
+- **Development**: C/C++ compilers, CMake, Ninja, clangd, GDB, LLDB, Bear and Cppcheck
+- **Reliability**: Valgrind, strace, coredumps, tracing, stress and network diagnostics
+- **Desktop**: Kitty and clipboard helpers when a desktop environment is relevant
+- **Docker**: optional installation from Docker's official package repository
+- **User**: shell plugins, fonts, dotfile links and Neovim plugin bootstrap
+
+The implementation is centralized, but the responsibilities remain explicit.
+
+## Environment-specific behavior
+
+Machine-specific policy should be detected from machine capabilities, not usernames or hardcoded hostnames.
+
+For example, a 42 workstation is identified by the mounted `/goinfre` filesystem and a writable `$HOME/goinfre`. In that environment, Neovim's disposable cache, data and state are redirected to `goinfre`, while the tracked config stays in the normal XDG config path.
+
+Project-specific environments are intentionally excluded from global shell policy. A Python project that wants its uv cache or virtualenv in `goinfre` should configure that locally instead of exporting a global `UV_PROJECT_ENVIRONMENT`.
+
+## Safety and idempotence
+
+The installer is designed to be rerun safely:
+
+- `--dry-run` previews operations
+- existing personal config is not overwritten silently
+- identical files can become symlinks automatically
+- conflicts can be inspected with `diff`
+- replacements are backed up under `~/.config/ava/backups/`
+- root config is copied rather than linked to a user checkout
+- Linux system settings use drop-in files rather than replacing distribution defaults
