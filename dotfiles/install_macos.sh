@@ -36,8 +36,8 @@ link "$ROOT/vim/.vimrc"              "$HOME/.vimrc"
 link "$ROOT/git/.gitconfig"          "$HOME/.gitconfig"
 
 # Kitty
-# macOS config is usually at ~/.config/kitty/kitty.conf too (cross-platform)
 link "$ROOT/kitty/kitty.conf"        "$HOME/.config/kitty/kitty.conf"
+link "$ROOT/kitty/start-shell"       "$HOME/.config/kitty/start-shell"
 
 # GDB (if installed via brew, usually needs configuration)
 link "$ROOT/debug/.gdbinit"          "$HOME/.gdbinit"
