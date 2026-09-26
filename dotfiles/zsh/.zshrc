@@ -75,6 +75,23 @@ alias cpersonal='cd ~/code/personal'
 alias coss='cd ~/code/open-source'
 alias clabs='cd ~/code/labs'
 
+# Docker
+alias d='docker'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias di='docker images'
+alias dex='docker exec -it'
+alias dlogs='docker logs -f'
+
+# Docker Compose
+alias dc='docker compose'
+alias dcu='docker compose up -d'
+alias dcd='docker compose down'
+alias dcb='docker compose build'
+alias dcps='docker compose ps'
+alias dcl='docker compose logs -f'
+alias dcr='docker compose restart'
+
 if [[ -z "$TMUX" ]]; then
     alias t="tmux"
 else
