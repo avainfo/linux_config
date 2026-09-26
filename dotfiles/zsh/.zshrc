@@ -82,6 +82,7 @@ alias dpsa='docker ps -a'
 alias di='docker images'
 alias dex='docker exec -it'
 alias dlogs='docker logs -f'
+alias dca='docker attach'
 
 # Docker Compose
 alias dc='docker compose'
