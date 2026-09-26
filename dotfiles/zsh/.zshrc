@@ -85,10 +85,10 @@ alias dlogs='docker logs -f'
 alias dca='docker attach'
 
 # Docker Compose
-alias dc='docker compose'
+alias dco='docker compose'
 alias dcu='docker compose up -d'
 alias dcd='docker compose down'
-alias dcb='docker compose build'
+alias dcbuild='docker compose build'
 alias dcps='docker compose ps'
 alias dcl='docker compose logs -f'
 alias dcr='docker compose restart'
