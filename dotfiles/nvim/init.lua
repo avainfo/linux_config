@@ -81,6 +81,15 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.textwidth = 120
 
+-- =========================
+-- Whitespace visualization
+-- =========================
+vim.opt.list = true
+vim.opt.listchars = {
+	tab = "»·",
+	trail = "·",
+}
+
 -- Python : PEP8 = 4 spaces, no tabs
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "python",
