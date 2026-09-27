@@ -87,6 +87,13 @@ install_root_oh_my_zsh() {
 	clone_or_update \
 		"https://github.com/romkatv/powerlevel10k.git" \
 		"$ZSH_CUSTOM_DIR/themes/powerlevel10k"
+	clone_or_update \
+		"https://github.com/zsh-users/zsh-completions.git" \
+		"$ZSH_CUSTOM_DIR/plugins/zsh-completions"
+
+	clone_or_update \
+		"https://github.com/zsh-users/zsh-history-substring-search.git" \
+		"$ZSH_CUSTOM_DIR/plugins/zsh-history-substring-search"
 }
 
 maybe_set_root_shell() {
