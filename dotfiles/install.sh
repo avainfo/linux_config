@@ -42,6 +42,17 @@ install_link() {
         return
     fi
 
+    local source_real
+    local target_real
+
+    source_real="$(readlink -f "$source_path" 2>/dev/null || true)"
+    target_real="$(readlink -f "$target_path" 2>/dev/null || true)"
+
+    if [[ -n "$source_real" && -n "$target_real" && "$source_real" == "$target_real" ]]; then
+        echo " [OK]   Already resolved to repo: $target_path"
+        return
+    fi
+
     if [[ -L "$target_path" && "$(readlink "$target_path")" == "$source_path" ]]; then
         echo " [OK]   Already linked: $target_path"
         return
