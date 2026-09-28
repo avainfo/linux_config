@@ -16,12 +16,10 @@ end
 
 local function clean_doxygen_line(s)
 	s = trim(s)
-
 	s = s:gsub("^/%*%*%s*", "")
 	s = s:gsub("^/%*%s*", "")
 	s = s:gsub("^%*%/%s*", "")
 	s = s:gsub("^%*%s?", "")
-
 	return trim(s)
 end
 
@@ -54,84 +52,119 @@ local function compact_blank_lines(lines)
 	return out
 end
 
+local function parse_command(line)
+	local command, rest = line:match("^@([%w_]+)%s*(.*)")
+	if command then
+		return command:lower(), rest
+	end
+
+	command, rest = line:match("^\\([%w_]+)%s*(.*)")
+	if command then
+		return command:lower(), rest
+	end
+
+	return nil, nil
+end
+
+local function push_blank(out)
+	if #out > 0 and out[#out] ~= "" then
+		table.insert(out, "")
+	end
+end
+
+local function start_section(out, state, name, title)
+	if state.section == name then
+		return
+	end
+
+	push_blank(out)
+	table.insert(out, title)
+	table.insert(out, "")
+	state.section = name
+end
+
+local labels = {
+	note = "Note",
+	warning = "Warning",
+	attention = "Attention",
+	deprecated = "Deprecated",
+	todo = "Todo",
+	see = "See",
+	since = "Since",
+	remark = "Remark",
+	remarks = "Remarks",
+}
+
 local function doxygen_to_markdown_lines(lines)
-	local params = {}
-	local returns = {}
-	local description = {}
-	local other = {}
+	local out = {}
+	local state = { section = nil }
+	local has_doxygen = false
 
 	for _, raw_line in ipairs(lines or {}) do
 		local line = clean_doxygen_line(raw_line)
+		local command, rest = parse_command(line)
 
-		local brief_text = line:match("^[@\\]brief%s+(.+)")
-		local param_name_with_dir, param_text_with_dir = line:match("^[@\\]param%s+%b[]%s*([%w_]+)%s+(.+)")
-		local param_name, param_text = line:match("^[@\\]param%s+([%w_]+)%s+(.+)")
-		local return_text = line:match("^[@\\]return%s+(.+)")
-		local retval_text = line:match("^[@\\]retval%s+(.+)")
+		if command then
+			has_doxygen = true
 
-		if brief_text then
-			table.insert(description, brief_text)
-		elseif param_name_with_dir and param_text_with_dir then
-			table.insert(params, {
-				name = param_name_with_dir,
-				text = param_text_with_dir,
-			})
-		elseif param_name and param_text then
-			table.insert(params, {
-				name = param_name,
-				text = param_text,
-			})
-		elseif return_text then
-			table.insert(returns, return_text)
-		elseif retval_text then
-			table.insert(returns, retval_text)
-		elseif line:match("^[@\\]%w+") then
-			-- Drop unsupported raw Doxygen commands.
-		elseif line ~= "" then
-			table.insert(other, line)
+			if command == "brief" then
+				state.section = nil
+				if rest ~= "" then
+					table.insert(out, rest)
+				end
+			elseif command == "param" or command == "tparam" then
+				start_section(out, state, command == "param" and "params" or "tparams", command == "param" and "**Parameters:**" or "**Template parameters:**")
+
+				local direction, name, text = rest:match("^%[([^%]]+)%]%s*([%w_]+)%s*(.*)")
+				if not name then
+					name, text = rest:match("^([%w_]+)%s*(.*)")
+				end
+
+				if name then
+					local prefix = direction and (" *[" .. direction .. "]*") or ""
+					table.insert(out, string.format("- %s%s: %s", "`" .. name .. "`", prefix, text or ""))
+				elseif rest ~= "" then
+					table.insert(out, "- " .. rest)
+				end
+			elseif command == "return" or command == "returns" then
+				start_section(out, state, "returns", "**Returns:**")
+				if rest ~= "" then
+					table.insert(out, rest)
+				end
+			elseif command == "retval" then
+				start_section(out, state, "returns", "**Returns:**")
+				local value, text = rest:match("^([^%s]+)%s*(.*)")
+				if value then
+					table.insert(out, string.format("- %s: %s", "`" .. value .. "`", text or ""))
+				elseif rest ~= "" then
+					table.insert(out, rest)
+				end
+			elseif labels[command] then
+				state.section = nil
+				push_blank(out)
+				local label = labels[command]
+				if command == "note" or command == "warning" or command == "attention" or command == "deprecated" or command == "todo" then
+					table.insert(out, string.format("> **%s:** %s", label, rest))
+				else
+					table.insert(out, string.format("**%s:** %s", label, rest))
+				end
+			else
+				state.section = nil
+				push_blank(out)
+				if rest ~= "" then
+					table.insert(out, string.format("**@%s:** %s", command, rest))
+				else
+					table.insert(out, "@" .. command)
+				end
+			end
+		else
+			state.section = nil
+			table.insert(out, line)
 		end
 	end
-
-	local has_doxygen = #description > 0 or #params > 0 or #returns > 0
 
 	if not has_doxygen then
 		return compact_blank_lines(lines)
-	end
-
-	local out = {}
-
-	for _, line in ipairs(other) do
-		table.insert(out, line)
-	end
-
-	if #description > 0 then
-		if #out > 0 then
-			table.insert(out, "")
-		end
-
-		for _, line in ipairs(description) do
-			table.insert(out, line)
-		end
-	end
-
-	if #params > 0 then
-		table.insert(out, "")
-		table.insert(out, "**Parameters:**")
-		table.insert(out, "")
-
-		for _, param in ipairs(params) do
-			table.insert(out, string.format("- `%s`: %s", param.name, param.text))
-		end
-	end
-
-	if #returns > 0 then
-		table.insert(out, "")
-		table.insert(out, "**Returns:**")
-		table.insert(out, "")
-
-		for _, line in ipairs(returns) do
-			table.insert(out, line)
-		end
 	end
 
 	return compact_blank_lines(out)
@@ -144,16 +177,5 @@ function Entry:get_documentation()
 		return docs
 	end
 
-	local joined = table.concat(docs, "\n")
-
-	if
-		joined:match("[@\\]brief")
-		or joined:match("[@\\]param")
-		or joined:match("[@\\]return")
-		or joined:match("[@\\]retval")
-	then
-		return doxygen_to_markdown_lines(docs)
-	end
-
-	return compact_blank_lines(docs)
+	return doxygen_to_markdown_lines(docs)
 end
