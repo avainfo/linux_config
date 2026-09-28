@@ -213,7 +213,7 @@ local function not_rebasing(bufnr)
 		return true
 	end
 
-	local gitdir = trim(result.stdout or "")
+	local gitdir = (result.stdout or ""):gsub("^%s+", ""):gsub("%s+$", "")
 	if gitdir == "" then
 		return true
 	end
@@ -385,7 +385,6 @@ function M.private_header()
 	})
 end
 
--- Optional: create user command + autocmds from here
 function M.setup(opts)
 	opts = opts or {}
 
@@ -404,7 +403,7 @@ function M.setup(opts)
 
 	vim.api.nvim_create_user_command("Stdheader", function()
 		M.stdheader()
-	end, {})
+	end, { force = true })
 	local aug = vim.api.nvim_create_augroup("stdheader", { clear = true })
 	vim.api.nvim_create_autocmd("BufWritePre", {
 		group = aug,
