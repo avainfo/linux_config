@@ -76,6 +76,7 @@ function M.hover()
 
 		vim.lsp.util.open_floating_preview(contents, "markdown", {
 			focus_id = "textDocument/hover",
+			border = "rounded",
 		})
 	end, bufnr)
 end
