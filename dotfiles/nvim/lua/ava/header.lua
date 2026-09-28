@@ -2,9 +2,17 @@
 
 local M = {}
 
--- Defaults (you can override in setup)
-M.user42 = "ando-sou"
-M.mail42 = "ando-sou@student.42porto.com"
+M.identity = {
+	school42 = {
+		user = "ando-sou",
+		mail = "ando-sou@student.42porto.com",
+	},
+	ava = {
+		company = "Ava Info Conseils",
+		author = "Antonin Do Souto",
+		contact = "antonindosouto@gmail.com",
+	},
+}
 
 -- ASCII art and layout
 M.asciiart = {
@@ -103,11 +111,11 @@ local function filename()
 end
 
 local function user()
-	return vim.g.user42 or M.user42 or os.getenv("USER") or "marvin"
+	return vim.g.user42 or M.identity.school42.user or os.getenv("USER") or "marvin"
 end
 
 local function mail()
-	return vim.g.mail42 or M.mail42 or os.getenv("MAIL") or "marvin@42.fr"
+	return vim.g.mail42 or M.identity.school42.mail or os.getenv("MAIL") or "marvin@42.fr"
 end
 
 local function date_str()
@@ -189,10 +197,35 @@ local function header_lines()
 	return out
 end
 
-local function not_rebasing()
-	local out = vim.fn.system("ls `git rev-parse --git-dir 2>/dev/null` | grep rebase | wc -l")
-	local n = tonumber((out or ""):match("%d+")) or 0
-	return n == 0
+local function not_rebasing(bufnr)
+	if not vim.system then
+		return true
+	end
+
+	local file = vim.api.nvim_buf_get_name(bufnr)
+	local cwd = file ~= "" and vim.fn.fnamemodify(file, ":h") or vim.uv.cwd()
+	local result = vim.system({ "git", "rev-parse", "--git-dir" }, {
+		cwd = cwd,
+		text = true,
+	}):wait()
+
+	if result.code ~= 0 then
+		return true
+	end
+
+	local gitdir = trim(result.stdout or "")
+	if gitdir == "" then
+		return true
+	end
+
+	if not gitdir:match("^/") then
+		gitdir = vim.fs.joinpath(cwd, gitdir)
+	end
+
+	gitdir = vim.fs.normalize(gitdir)
+
+	return not vim.uv.fs_stat(vim.fs.joinpath(gitdir, "rebase-merge"))
+		and not vim.uv.fs_stat(vim.fs.joinpath(gitdir, "rebase-apply"))
 end
 
 function M.insert()
@@ -209,10 +242,11 @@ function M.update()
 	local l9 = vim.api.nvim_buf_get_lines(bufnr, 8, 9, false)[1] or ""
 	local check = M.start .. spaces(M.margin - strlen(M.start)) .. "Updated: "
 	if l9:sub(1, #check) == check then
-		if vim.bo.modified and not_rebasing() then
+		local safe_to_update = not_rebasing(bufnr)
+		if vim.bo[bufnr].modified and safe_to_update then
 			vim.api.nvim_buf_set_lines(bufnr, 8, 9, false, { line(9) })
 		end
-		if not_rebasing() then
+		if safe_to_update then
 			vim.api.nvim_buf_set_lines(bufnr, 3, 4, false, { line(4) })
 		end
 		return 0
@@ -303,41 +337,44 @@ local function insert_plain_header(lines)
 end
 
 function M.mit_header()
+	local ava = M.identity.ava
 	insert_plain_header({
-		"Ava Info Conseils",
+		ava.company,
 		"",
-		"Author: Antonin Do Souto",
-		"Contact: antonindosouto@gmail.com",
+		"Author: " .. ava.author,
+		"Contact: " .. ava.contact,
 		"",
-		"Copyright (c) 2026 Antonin Do Souto",
+		"Copyright (c) " .. os.date("%Y") .. " " .. ava.author,
 		"",
 		"SPDX-License-Identifier: MIT",
 	})
 end
 
 function M.apache_header()
+	local ava = M.identity.ava
 	insert_plain_header({
-		"Ava Info Conseils",
+		ava.company,
 		"",
-		"Author: Antonin Do Souto",
-		"Contact: antonindosouto@gmail.com",
+		"Author: " .. ava.author,
+		"Contact: " .. ava.contact,
 		"",
-		"Copyright (c) 2026 Antonin Do Souto",
+		"Copyright (c) " .. os.date("%Y") .. " " .. ava.author,
 		"",
 		"SPDX-License-Identifier: Apache-2.0",
 	})
 end
 
 function M.private_header()
+	local ava = M.identity.ava
 	insert_plain_header({
-		"Ava Info Conseils",
+		ava.company,
 		"",
-		"Author: Antonin Do Souto",
-		"Contact: antonindosouto@gmail.com",
+		"Author: " .. ava.author,
+		"Contact: " .. ava.contact,
 		"",
 		"Proprietary / Commercial License",
 		"",
-		"Copyright (c) 2026 Antonin Do Souto",
+		"Copyright (c) " .. os.date("%Y") .. " " .. ava.author,
 		"",
 		"All rights reserved.",
 		"",
@@ -351,11 +388,18 @@ end
 -- Optional: create user command + autocmds from here
 function M.setup(opts)
 	opts = opts or {}
+
 	if opts.user then
-		M.user42 = opts.user
+		M.identity.school42.user = opts.user
 	end
 	if opts.mail then
-		M.mail42 = opts.mail
+		M.identity.school42.mail = opts.mail
+	end
+	if opts.school42 then
+		M.identity.school42 = vim.tbl_deep_extend("force", M.identity.school42, opts.school42)
+	end
+	if opts.ava then
+		M.identity.ava = vim.tbl_deep_extend("force", M.identity.ava, opts.ava)
 	end
 
 	vim.api.nvim_create_user_command("Stdheader", function()
