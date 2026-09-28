@@ -85,7 +85,9 @@ return {
 				vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 
 				-- Documentation
-				vim.keymap.set("n", "K", function()\n\t\t\t\t\trequire("config.lsp_hover_docs").hover()\n\t\t\t\tend, opts)
+				vim.keymap.set("n", "K", function()
+					require("config.lsp_hover_docs").hover()
+				end, opts)
 				vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 
 				-- Actions
