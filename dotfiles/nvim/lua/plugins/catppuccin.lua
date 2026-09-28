@@ -2,11 +2,11 @@ return {
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
-		priority = 1000, -- Load first
-		lazy = false, -- Load immediately (not lazy)
+		priority = 1000,
+		lazy = false,
 		config = function()
 			require("catppuccin").setup({
-				flavour = "mocha", -- latte, frappe, macchiato, mocha
+				flavour = "mocha",
 				background = {
 					light = "latte",
 					dark = "mocha",
@@ -35,12 +35,21 @@ return {
 						},
 					},
 				},
+				custom_highlights = function(colors)
+					return {
+						Normal = { bg = "#1a1a1a" },
+						NormStatusOn = { fg = colors.green, bold = true },
+						NormStatusOff = { fg = colors.red, bold = true },
+						CmpNormal = { bg = "#242438" },
+						CmpBorder = { fg = "#7c6f9f" },
+						CmpDocNormal = { bg = "#1e1e2e" },
+						CmpDocBorder = { fg = "#585b70" },
+						CmpSel = { bg = "#313244", bold = true },
+					}
+				end,
 			})
 
-			-- Apply the colorscheme
 			vim.cmd("colorscheme catppuccin")
-			-- Custom background
-			vim.cmd("hi Normal guibg=#1a1a1a")
 		end,
 	},
 }
