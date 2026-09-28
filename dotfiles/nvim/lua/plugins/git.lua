@@ -1,8 +1,4 @@
 return {
-
-	-- ─────────────────────────────────────────────────────────────
-	-- gitsigns: gutter signs + hunk operations
-	-- ─────────────────────────────────────────────────────────────
 	{
 		"lewis6991/gitsigns.nvim",
 		event = { "BufReadPre", "BufNewFile" },
@@ -23,18 +19,26 @@ return {
 			on_attach = function(bufnr)
 				local gs = package.loaded.gitsigns
 
-				local function map(mode, lhs, rhs, desc)
-					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+				local function map(mode, lhs, rhs, desc, extra)
+					local opts = {
+						buffer = bufnr,
+						desc = desc,
+					}
+
+					if extra then
+						opts = vim.tbl_extend("force", opts, extra)
+					end
+
+					vim.keymap.set(mode, lhs, rhs, opts)
 				end
 
-				-- Hunk navigation
 				map("n", "]h", function()
 					if vim.wo.diff then
 						return "]c"
 					end
 					vim.schedule(gs.next_hunk)
 					return "<Ignore>"
-				end, "Next hunk")
+				end, "Next hunk", { expr = true })
 
 				map("n", "[h", function()
 					if vim.wo.diff then
@@ -42,9 +46,8 @@ return {
 					end
 					vim.schedule(gs.prev_hunk)
 					return "<Ignore>"
-				end, "Prev hunk")
+				end, "Prev hunk", { expr = true })
 
-				-- Hunk operations
 				map("n", "<leader>hs", gs.stage_hunk, "Stage hunk")
 				map("n", "<leader>hr", gs.reset_hunk, "Reset hunk")
 				map("v", "<leader>hs", function()
@@ -62,19 +65,13 @@ return {
 					gs.diffthis("~")
 				end, "Diff this (last commit)")
 
-				-- Blame
 				map("n", "<leader>hb", gs.blame_line, "Blame line")
 				map("n", "<leader>hB", gs.toggle_current_line_blame, "Toggle blame")
 
-				-- Text objects: ih = inner hunk
 				map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "Select hunk")
 			end,
 		},
 	},
-
-	-- ─────────────────────────────────────────────────────────────
-	-- lazygit: full git interface in a floating window
-	-- ─────────────────────────────────────────────────────────────
 	{
 		"kdheepak/lazygit.nvim",
 		cmd = {
@@ -91,10 +88,6 @@ return {
 			{ "<leader>gl", "<cmd>LazyGitFilter<CR>", desc = "LazyGit log" },
 		},
 	},
-
-	-- ─────────────────────────────────────────────────────────────
-	-- diffview: clean diff and history explorer
-	-- ─────────────────────────────────────────────────────────────
 	{
 		"sindrets/diffview.nvim",
 		cmd = {
@@ -123,26 +116,4 @@ return {
 			},
 		},
 	},
-
-	-- ─────────────────────────────────────────────────────────────
-	-- octo.nvim: GitHub PRs and issues inside Neovim
-	-- Uncomment if you do regular PR reviews
-	-- Requires: gh CLI installed and authenticated (gh auth login)
-	-- ─────────────────────────────────────────────────────────────
-	-- {
-	--   "pwntester/octo.nvim",
-	--   cmd = "Octo",
-	--   dependencies = {
-	--     "nvim-lua/plenary.nvim",
-	--     "nvim-telescope/telescope.nvim",
-	--     "nvim-tree/nvim-web-devicons",
-	--   },
-	--   opts = {
-	--     enable_builtin = true,
-	--   },
-	--   keys = {
-	--     { "<leader>gp", "<cmd>Octo pr list<CR>",    desc = "Octo PR list" },
-	--     { "<leader>gi", "<cmd>Octo issue list<CR>", desc = "Octo issue list" },
-	--   },
-	-- },
 }
