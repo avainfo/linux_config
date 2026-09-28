@@ -36,10 +36,10 @@ function M.on_attach(_, bufnr)
 
 	if vim.diagnostic.jump then
 		map("n", "[d", function()
-			vim.diagnostic.jump({ count = -1, float = true })
+			vim.diagnostic.jump({ count = -1 })
 		end, "Previous diagnostic")
 		map("n", "]d", function()
-			vim.diagnostic.jump({ count = 1, float = true })
+			vim.diagnostic.jump({ count = 1 })
 		end, "Next diagnostic")
 	else
 		map("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
