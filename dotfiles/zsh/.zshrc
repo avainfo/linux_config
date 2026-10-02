@@ -51,6 +51,10 @@ plugins=(
 
 [[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh" || echo "Warning: Oh My Zsh not found"
 
+# Completion
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'l:|=* r:|=*'
+zstyle ':completion:*' menu select
+
 # ============================================================
 # 4. COULEURS / LS
 # ============================================================
