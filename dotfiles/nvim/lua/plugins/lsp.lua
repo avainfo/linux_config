@@ -119,7 +119,7 @@ return {
 				},
 			}
 
-			if type(vim.lsp.config) == "function" and type(vim.lsp.enable) == "function" then
+			if vim.fn.has("nvim-0.11") == 1 then
 				for name, config in pairs(servers) do
 					vim.lsp.config(name, config)
 					vim.lsp.enable(name)
