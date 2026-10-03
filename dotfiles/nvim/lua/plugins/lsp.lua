@@ -23,7 +23,6 @@ return {
 				"clangd",
 				"lua_ls",
 				"ruff",
-				"ts_ls",
 			},
 			automatic_installation = true,
 		},
@@ -119,16 +118,9 @@ return {
 						},
 					},
 				},
-				ts_ls = {
+				tsc = {
 					capabilities = capabilities,
 					on_attach = common.on_attach,
-					init_options = {
-						preferences = {
-							includeCompletionsForModuleExports = true,
-							includeCompletionsForImportStatements = true,
-							importModuleSpecifierPreference = "relative",
-						},
-					},
 				},
 			}
 
