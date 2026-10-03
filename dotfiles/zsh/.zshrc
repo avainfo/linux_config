@@ -78,6 +78,7 @@ alias cpgads='cd ~/code/pgads'
 alias cpersonal='cd ~/code/personal'
 alias coss='cd ~/code/open-source'
 alias clabs='cd ~/code/labs'
+alias cconf='cd ~/Documents/config'
 
 # Docker
 alias d='docker'
