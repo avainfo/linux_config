@@ -24,7 +24,7 @@ return {
 				"lua_ls",
 				"ruff",
 			},
-			automatic_installation = true,
+			automatic_enable = false,
 		},
 	},
 	{
