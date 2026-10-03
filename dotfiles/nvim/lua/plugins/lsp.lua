@@ -23,6 +23,7 @@ return {
 				"clangd",
 				"lua_ls",
 				"ruff",
+				"ts_ls",
 			},
 			automatic_installation = true,
 		},
@@ -115,6 +116,17 @@ return {
 							completion = {
 								callSnippet = "Replace",
 							},
+						},
+					},
+				},
+				ts_ls = {
+					capabilities = capabilities,
+					on_attach = common.on_attach,
+					init_options = {
+						preferences = {
+							includeCompletionsForModuleExports = true,
+							includeCompletionsForImportStatements = true,
+							importModuleSpecifierPreference = "relative",
 						},
 					},
 				},
