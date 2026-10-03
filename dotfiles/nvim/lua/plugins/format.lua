@@ -8,6 +8,16 @@ return {
 			conform.setup({
 				formatters_by_ft = {
 					python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
+					json = { "prettierd" },
+					jsonc = { "prettierd" },
+					javascript = { "prettierd" },
+					javascriptreact = { "prettierd" },
+					typescript = { "prettierd" },
+					typescriptreact = { "prettierd" },
+					css = { "prettierd" },
+					scss = { "prettierd" },
+					html = { "prettierd" },
+					markdown = { "prettierd" },
 					c = { "clang-format" },
 					cpp = { "clang-format" },
 					rust = { "rustfmt" },
