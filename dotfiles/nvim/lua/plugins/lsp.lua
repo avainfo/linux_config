@@ -33,6 +33,7 @@ return {
 		opts = {
 			ensure_installed = {
 				"clang-format",
+				"prettierd",
 				"rust-analyzer",
 				"stylua",
 			},
