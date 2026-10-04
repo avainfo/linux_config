@@ -15,6 +15,8 @@ return {
 				scss = true,
 				html = true,
 				markdown = true,
+				yaml = true,
+				["yaml.docker-compose"] = true,
 			}
 
 			conform.setup({
@@ -30,6 +32,8 @@ return {
 					scss = { "prettierd" },
 					html = { "prettierd" },
 					markdown = { "prettierd" },
+					yaml = { "prettierd" },
+					["yaml.docker-compose"] = { "prettierd" },
 					c = { "clang-format" },
 					cpp = { "clang-format" },
 					rust = { "rustfmt" },
