@@ -5,6 +5,8 @@ return {
 		lazy = false,
 		build = ":TSUpdate",
 		config = function()
+			vim.treesitter.language.register("yaml", "yaml.docker-compose")
+
 			require("nvim-treesitter.configs").setup({
 				ensure_installed = {
 					"bash",
