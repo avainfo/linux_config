@@ -23,6 +23,7 @@ return {
 				"clangd",
 				"lua_ls",
 				"ruff",
+				"yamlls",
 			},
 			automatic_enable = false,
 		},
@@ -57,6 +58,7 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 			"williamboman/mason-lspconfig.nvim",
 			"folke/lazydev.nvim",
+			"b0o/schemastore.nvim",
 		},
 		config = function()
 			local common = require("config.lsp")
@@ -121,6 +123,44 @@ return {
 				tsc = {
 					capabilities = capabilities,
 					on_attach = common.on_attach,
+				},
+				yamlls = {
+					capabilities = capabilities,
+					on_attach = common.on_attach,
+					settings = {
+						redhat = {
+							telemetry = { enabled = false },
+						},
+						yaml = {
+							format = { enable = false },
+							validate = true,
+							completion = true,
+							hover = true,
+							schemaStore = {
+								enable = false,
+								url = "",
+							},
+							schemas = require("schemastore").yaml.schemas({
+								extra = {
+									{
+										name = "Docker Compose",
+										description = "Docker Compose specification",
+										url = "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json",
+										fileMatch = {
+											"compose.yml",
+											"compose.yaml",
+											"compose.*.yml",
+											"compose.*.yaml",
+											"docker-compose.yml",
+											"docker-compose.yaml",
+											"docker-compose.*.yml",
+											"docker-compose.*.yaml",
+										},
+									},
+								},
+							}),
+						},
+					},
 				},
 			}
 
