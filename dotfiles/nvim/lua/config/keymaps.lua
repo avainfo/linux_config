@@ -9,7 +9,7 @@ vim.keymap.set("i", "<C-Right>", "<C-o>w", { noremap = true })
 vim.keymap.set("n", "<C-Del>", "dw", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-Del>", "<C-o>dw", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-h>", "db", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-h>", "<C-o>db", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-h>", "<C-w>", { noremap = true, silent = true })
 
 local headers = require("ava.header")
 
