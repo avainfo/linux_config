@@ -20,6 +20,16 @@ vim.keymap.set("n", "<F1>p", headers.private_header, { silent = true, desc = "He
 
 vim.keymap.set("n", "<Space>n", "<cmd>write<CR>", { desc = "Save and run Norminette" })
 
+-- Toggle the Quickfix window in the current tab.
+vim.keymap.set("n", "<leader>Q", function()
+	local info = vim.fn.getqflist({ winid = 0 })
+	if info.winid and info.winid ~= 0 then
+		vim.cmd("cclose")
+	else
+		vim.cmd("copen")
+	end
+end, { desc = "Toggle Quickfix list", silent = true })
+
 vim.keymap.set("n", "<Space>s", function()
 	vim.diagnostic.open_float(nil, { focus = true })
 end, { desc = "Show diagnostics at cursor" })
