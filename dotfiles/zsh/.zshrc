@@ -240,7 +240,7 @@ EOF
 # 6.1 TMUX + NEOVIM WORKSPACE LAYOUTS
 # ============================================================
 # dvim [files...]: Neovim split left/right above one shell
-# tvim [files...]: Neovim split left/right above two shell panes
+# tvim [files...]: Neovim split left/right above a second Neovim pane
 # Always create a new tmux window when already inside tmux.
 # Otherwise create and attach to a dedicated tmux session.
 _tmux_nvim_layout() {
@@ -267,13 +267,17 @@ _tmux_nvim_layout() {
     # 65% for Neovim above, 35% for terminals below.
     bottom="$(tmux split-window -v -p 35 -P -F '#{pane_id}' -t "$top" -c "$PWD")" || return 1
 
-    if [[ "$layout" == "tvim" ]]; then
-        tmux split-window -h -p 50 -t "$bottom" -c "$PWD" >/dev/null || return 1
-    fi
-
     # Send the editor command after arranging the panes, retaining the shell on exit.
     tmux send-keys -l -t "$top" "$command_line" || return 1
     tmux send-keys -t "$top" Enter || return 1
+
+    # tvim runs a separate Neovim instance across the entire lower tmux pane.
+    # dvim keeps that same pane as a normal shell.
+    if [[ "$layout" == "tvim" ]]; then
+        tmux send-keys -l -t "$bottom" "nvim" || return 1
+        tmux send-keys -t "$bottom" Enter || return 1
+    fi
+
     tmux select-pane -t "$top" || return 1
 
     [[ -z "$session" ]] || tmux attach-session -t "$session"
