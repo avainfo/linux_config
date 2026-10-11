@@ -260,7 +260,7 @@ _tmux_nvim_layout() {
     if [[ -n "${TMUX:-}" ]]; then
         top="$(tmux new-window -P -F '#{pane_id}' -n "$layout" -c "$PWD")" || return 1
     else
-        session="${layout}-$"
+        session="${layout}-$$-${RANDOM}"
         top="$(tmux new-session -d -P -F '#{pane_id}' -s "$session" -n "$layout" -c "$PWD")" || return 1
     fi
 
