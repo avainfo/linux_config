@@ -265,7 +265,7 @@ _tmux_nvim_layout() {
     fi
 
     # 65% for the top editor, 35% for the bottom editor or terminal.
-    bottom="$(tmux split-window -v -p 35 -P -F '#{pane_id}' -t "$top" -c "$PWD")" || return 1
+    bottom="$(tmux split-window -v -l '35%' -P -F '#{pane_id}' -t "$top" -c "$PWD")" || return 1
 
     # Send the editor command after arranging the panes, retaining the shell on exit.
     tmux send-keys -l -t "$top" "$command_line" || return 1
