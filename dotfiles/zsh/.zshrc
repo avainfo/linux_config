@@ -264,7 +264,7 @@ _tmux_nvim_layout() {
         top="$(tmux new-session -d -P -F '#{pane_id}' -s "$session" -n "$layout" -c "$PWD")" || return 1
     fi
 
-    # 65% for Neovim above, 35% for terminals below.
+    # 65% for the top editor, 35% for the bottom editor or terminal.
     bottom="$(tmux split-window -v -p 35 -P -F '#{pane_id}' -t "$top" -c "$PWD")" || return 1
 
     # Send the editor command after arranging the panes, retaining the shell on exit.
