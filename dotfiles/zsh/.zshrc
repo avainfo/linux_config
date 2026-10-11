@@ -276,6 +276,9 @@ _tmux_nvim_layout() {
     if [[ "$layout" == "tvim" ]]; then
         tmux send-keys -l -t "$bottom" "nvim" || return 1
         tmux send-keys -t "$bottom" Enter || return 1
+    else
+        # Start dvim with a clean lower shell.
+        tmux send-keys -t "$bottom" C-l || return 1
     fi
 
     tmux select-pane -t "$top" || return 1
