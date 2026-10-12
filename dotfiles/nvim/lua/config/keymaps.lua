@@ -44,20 +44,6 @@ vim.keymap.set("n", "<Space>ct", cp.load_template, { desc = "CP: load template" 
 
 vim.keymap.set("t", "<C-q>", "<C-\\><C-n>", { noremap = true, desc = "Terminal: normal mode" })
 
-vim.keymap.set("i", "<C-x>", function()
-	for _, win in ipairs(vim.api.nvim_list_wins()) do
-		local buf = vim.api.nvim_win_get_buf(win)
-		if vim.bo[buf].filetype == "cmp_docs" then
-			local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-			vim.notify(
-				"CMP DOCS CONTENT:\n\n" .. table.concat(lines, "\n"),
-				vim.log.levels.INFO,
-				{ title = "cmp_docs debug" }
-			)
-		end
-	end
-end, { desc = "Debug cmp docs content" })
-
 vim.keymap.set("n", "<leader>cp", function()
 	vim.cmd("write")
 	vim.cmd("botright split")
