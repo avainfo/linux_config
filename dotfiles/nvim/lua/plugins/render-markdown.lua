@@ -13,9 +13,6 @@ return {
 
 				render_modes = { "n", "i", "c" },
 
-				hover = {
-					enabled = true,
-				},
 			})
 		end,
 	},
