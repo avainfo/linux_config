@@ -311,14 +311,6 @@ if [[ -d "$HOME/.config/ava" ]]; then
 fi
 
 # ============================================================
-# 8.1 MISE (DEV TOOL VERSIONS)
-# ============================================================
-# Activate only when mise is installed; keep it after other PATH setup.
-if command -v mise >/dev/null 2>&1; then
-    eval "$(mise activate zsh)"
-fi
-
-# ============================================================
 # 9. PROMPT / P10K
 # ============================================================
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
