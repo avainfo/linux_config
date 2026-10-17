@@ -1,5 +1,6 @@
 return {
 	"stevearc/oil.nvim",
+	branch = "nvim-0.9",
 	lazy = false,
 	dependencies = {
 		{ "nvim-mini/mini.icons", opts = {} },
