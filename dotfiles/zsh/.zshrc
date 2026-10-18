@@ -289,6 +289,18 @@ _tmux_nvim_layout() {
 dvim() { _tmux_nvim_layout dvim "$@" }
 tvim() { _tmux_nvim_layout tvim "$@" }
 
+# Browse remote files via Oil's SSH adapter using an SSH host alias.
+svim() {
+    if (( $# != 1 )) || [[ -z "$1" ]]; then
+        print -u2 "Usage: svim <ssh-alias>[/remote/path]"
+        return 2
+    fi
+
+    local target="${1#oil-ssh://}"
+    [[ "$target" == */* ]] || target+="/"
+    command nvim "oil-ssh://$target"
+}
+
 # ============================================================
 # 7. OUTILS TIERS (nvm, cargo, atuin...)
 # ============================================================
