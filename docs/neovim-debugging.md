@@ -16,10 +16,10 @@ gdb --version | head -n 1
 
 On supported Debian-based systems, GDB can usually be installed with `sudo apt install gdb`. Verify the version; older GDB packages do not provide the DAP interpreter.
 
-Install the Neovim plugins after updating the configuration:
+Install only the newly declared plugins after updating the configuration (without updating unrelated plugins):
 
 ```vim
-:Lazy sync
+:Lazy install
 ```
 
 Restart Neovim after installation.
