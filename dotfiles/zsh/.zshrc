@@ -320,6 +320,144 @@ svim() {
     command nvim "oil-ssh://$target"
 }
 
+# Complete SSH aliases and remote paths without interactive password prompts.
+_svim() {
+    local target="${words[CURRENT]}"
+    local host remote parent prefix candidate entry type name
+    local -a hosts=() directories=() files=() entries=()
+
+    if [[ "$target" != */* ]]; then
+        if [[ -r "$HOME/.ssh/config" ]]; then
+            hosts=("${(@f)$(awk '
+                tolower($1) == "host" {
+                    for (i = 2; i <= NF; i++) {
+                        if ($i ~ /^#/) break
+                        if ($i !~ /[*!?]/) print $i
+                    }
+                }
+            ' "$HOME/.ssh/config")}")
+        fi
+        (( ${#hosts} )) && compadd -S / -- "${hosts[@]}"
+        return
+    fi
+
+    host="${target%%/*}"
+    remote="${target#*/}"
+    [[ -n "$host" && "$host" != -* ]] || return 1
+
+    if [[ "$remote" == */* ]]; then
+        parent="${remote%/*}"
+        prefix="${parent}/"
+        [[ -n "$parent" ]] || parent="/"
+    else
+        parent="."
+        prefix=""
+    fi
+
+    [[ "$parent" == /* || "$parent" == . ]] || parent="./$parent"
+
+    local output
+    output="$(command ssh -T -o BatchMode=yes -o ConnectTimeout=3 \
+        -o ConnectionAttempts=1 -- "$host" \
+        "find -L ${(q)parent} -mindepth 1 -maxdepth 1 -printf '%y\\t%f\\n'" \
+        2>/dev/null)" || return 1
+
+    entries=("${(@f)output}")
+    for entry in "${entries[@]}"; do
+        [[ "$entry" == *# ============================================================
+# 7. OUTILS TIERS (nvm, cargo, atuin...)
+# ============================================================
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]]          && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+[[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
+
+# ============================================================
+# 8. CONFIG LOCALE (.config/ava/*.zsh)
+# ============================================================
+if [[ -d "$HOME/.config/ava" ]]; then
+    for conf in "$HOME"/.config/ava/*.zsh(N); do
+        source "$conf"
+    done
+fi
+
+# ============================================================
+# 9. PROMPT / P10K
+# ============================================================
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+\t'* ]] || continue
+        type="${entry%%# ============================================================
+# 7. OUTILS TIERS (nvm, cargo, atuin...)
+# ============================================================
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]]          && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+[[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
+
+# ============================================================
+# 8. CONFIG LOCALE (.config/ava/*.zsh)
+# ============================================================
+if [[ -d "$HOME/.config/ava" ]]; then
+    for conf in "$HOME"/.config/ava/*.zsh(N); do
+        source "$conf"
+    done
+fi
+
+# ============================================================
+# 9. PROMPT / P10K
+# ============================================================
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+\t'*}"
+        name="${entry#*# ============================================================
+# 7. OUTILS TIERS (nvm, cargo, atuin...)
+# ============================================================
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]]          && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+[[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
+
+# ============================================================
+# 8. CONFIG LOCALE (.config/ava/*.zsh)
+# ============================================================
+if [[ -d "$HOME/.config/ava" ]]; then
+    for conf in "$HOME"/.config/ava/*.zsh(N); do
+        source "$conf"
+    done
+fi
+
+# ============================================================
+# 9. PROMPT / P10K
+# ============================================================
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+\t'}"
+        [[ -n "$name" ]] || continue
+        candidate="$host/$prefix$name"
+
+        if [[ "$type" == d ]]; then
+            directories+=("$candidate")
+        else
+            files+=("$candidate")
+        fi
+    done
+
+    (( ${#directories} )) && compadd -S / -- "${directories[@]}"
+    (( ${#files} )) && compadd -- "${files[@]}"
+    return 0
+}
+compdef _svim svim
+
 # ============================================================
 # 7. OUTILS TIERS (nvm, cargo, atuin...)
 # ============================================================
