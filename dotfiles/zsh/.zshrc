@@ -70,7 +70,7 @@ alias vim="nvim"
 alias gs="git status"
 alias py="python3"
 alias rpy="rm -rf __pycache__"
-alias dev="cd ~/Documents/Development/"
+alias dev='cd ~/code'
 
 alias ccode='cd ~/code'
 alias c42='cd ~/code/42'
@@ -78,6 +78,10 @@ alias cpgads='cd ~/code/pgads'
 alias cpersonal='cd ~/code/personal'
 alias coss='cd ~/code/open-source'
 alias clabs='cd ~/code/labs'
+alias cava='cd ~/code/avainfo'
+alias cclients='cd ~/code/clients'
+alias ctutoring='cd ~/code/tutoring'
+alias chackathons='cd ~/code/hackathons'
 alias cconf='cd ~/Documents/config'
 
 # Docker
@@ -110,9 +114,9 @@ else
     alias k="echo 'Kitty is already running'"
 fi
 
-alias avainfo='~/Documents/Development/AvaInfo/'
-alias pgads='~/Documents/Development/PGADS/'
-alias aura='~/Documents/Development/PersonalProjects/Aura-mk2/'
+alias avainfo='cd ~/code/avainfo'
+alias pgads='cd ~/code/pgads'
+alias aura='cd ~/code/personal/Aura-mk2'
 
 [[ -f "$HOME/tools/francinette/tester.sh" ]] && \
     alias francinette="$HOME/tools/francinette/tester.sh" && \
@@ -125,12 +129,18 @@ c() { cc -Wall -Wextra -Werror "$@" && ./a.out && rm -f a.out }
 val() { cc -Wall -Wextra -Werror "$@" && valgrind ./a.out && rm -f a.out }
 check() { norminette "$@" }
 
-checkp() {
-    echo "[1/4] py_compile..."  && python3 -m py_compile "$@"
-    echo "[2/4] flake8..."      && python3 -m flake8 "$@"
-    echo "[3/4] mypy --strict..." && python3 -m mypy --strict "$@"
-    echo "[4/4] cleaning..."    && rm -rf **/__pycache__
-}
+checkp() (
+    (( $# )) || { print -u2 'Usage: checkp <files.py...>'; return 2; }
+    local cache_dir
+    cache_dir="$(mktemp -d "${TMPDIR:-/tmp}/checkp.XXXXXXXX")" || return 1
+    trap 'command rm -rf -- "$cache_dir"' EXIT
+    echo "[1/3] py_compile..."
+    PYTHONPYCACHEPREFIX="$cache_dir" python3 -m py_compile "$@" || return $?
+    echo "[2/3] flake8..."
+    python3 -m flake8 "$@" || return $?
+    echo "[3/3] mypy --strict..."
+    python3 -m mypy --strict "$@"
+)
 
 cpi() { g++ -o main "$1" && ./main < input && rm -f main }
 
@@ -155,8 +165,17 @@ cpnew() {
     [[ ! -f "$dest/input.txt" ]] && touch "$dest/input.txt"
     cd "$dest" && nvim main.cpp
 }
-alias cpr='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out'
-alias cpri='g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined -o /tmp/cp_out "$1" && time /tmp/cp_out < input.txt'
+# Remove the former aliases when reloading this configuration.
+unalias cpr cpri 2>/dev/null
+cpr() (
+    (( $# )) || { print -u2 'Usage: cpr <source.cpp> [compiler flags...]'; return 2; }
+    local build_dir
+    build_dir="$(mktemp -d "${TMPDIR:-/tmp}/cpr.XXXXXXXX")" || return 1
+    trap 'command rm -rf -- "$build_dir"' EXIT
+    g++ -std=c++20 -O2 -Wall -fsanitize=address,undefined "$@" -o "$build_dir/main" || return $?
+    time "$build_dir/main"
+)
+cpri() { cpr "$@" < input.txt }
 
 cfl() {
     local dir="${1:-.}" makefile output flags
