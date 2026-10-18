@@ -102,3 +102,4 @@ Check the `docs/` folder for more details:
 - [Workstation Philosophy](docs/workstation.md)
 - [How to Restore Backups](docs/restore.md)
 - [Crash Analysis Workflow](docs/crash-analysis-workflow.md)
+- [Neovim GDB Debugging](docs/neovim-debugging.md)
