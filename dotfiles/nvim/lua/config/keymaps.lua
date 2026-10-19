@@ -11,6 +11,16 @@ vim.keymap.set("i", "<C-Del>", "<C-o>dw", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-h>", "db", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-h>", "<C-w>", { noremap = true, silent = true })
 
+-- Copy to the system clipboard without changing Neovim's unnamed register.
+vim.keymap.set("x", "<leader>y", function()
+	local mode = vim.fn.mode()
+	local selection = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = mode })
+	vim.fn.setreg("+", selection, mode)
+end, { desc = "Copy selection to system clipboard" })
+
+vim.keymap.set("n", "<leader>y", function()
+	vim.fn.setreg("+", vim.api.nvim_get_current_line(), "V")
+end, { desc = "Copy line to system clipboard" })
 local headers = require("ava.header")
 
 vim.keymap.set("n", "<F1>f", headers.stdheader, { silent = true, desc = "Header: 42 stdheader" })
