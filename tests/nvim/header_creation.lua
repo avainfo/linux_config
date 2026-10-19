@@ -47,7 +47,7 @@ reset()
 vim.cmd.edit(vim.fn.fnameescape(tmpdir .. "/existing.c"))
 assert(buffer_text() == "int answer = 42;", "Do not modify existing content")
 
-for _, ext in ipairs({ "h", "cc", "hh", "cpp", "hpp", "tpp", "ipp", "cxx", "go", "rs", "java", "kt", "kts", "js", "ts", "lua", "py", "asm", "tex", "ml", "vim", "f90", "el" }) do
+for _, ext in ipairs({ "h", "cc", "hh", "cpp", "hpp", "tpp", "ipp", "cxx", "go", "rs", "java", "kt", "kts", "js", "ts", "lua", "py", "asm", "tex", "ml", "mli", "mll", "mly", "vim", "f", "for", "f90", "f95", "f03", "el" }) do
 	local out = new_file("demo." .. ext)
 	assert_contains(out, "SPDX-License-Identifier: MIT")
 end
@@ -63,6 +63,21 @@ assert_contains(xml, "SPDX-License-Identifier: MIT")
 local html = new_file("page.html")
 assert(html:sub(1, 15) == "<!DOCTYPE html>", "HTML doctype must precede the comment")
 assert_contains(html, "SPDX-License-Identifier: MIT")
+
+assert_contains(new_file(".vimrc"), "SPDX-License-Identifier: MIT")
+assert_contains(new_file(".emacs"), "SPDX-License-Identifier: MIT")
+assert_contains(new_file("page.htm"), "SPDX-License-Identifier: MIT")
+assert(new_file("view.tsx") == "", "Unsupported TSX must remain unchanged")
+assert(new_file("view.jsx") == "", "Unsupported JSX must remain unchanged")
+
+reset()
+vim.cmd.split(vim.fn.fnameescape(tmpdir .. "/from_split.cpp"))
+assert_contains(buffer_text(), "SPDX-License-Identifier: MIT")
+vim.cmd.close()
+reset()
+vim.cmd.vsplit(vim.fn.fnameescape(tmpdir .. "/from_vsplit.h"))
+assert_contains(buffer_text(), "SPDX-License-Identifier: MIT")
+vim.cmd.close()
 
 assert(new_file("README.md") == "", "Unsupported file extensions must remain untouched")
 
