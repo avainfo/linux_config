@@ -26,6 +26,7 @@ local headers = require("ava.header")
 
 vim.keymap.set("n", "<F1>f", headers.stdheader, { silent = true, desc = "Header: 42 stdheader" })
 vim.keymap.set("n", "<F1>m", headers.mit_header, { silent = true, desc = "Header: MIT" })
+vim.keymap.set("n", "<F1>g", headers.gpl_header, { silent = true, desc = "Header: GPL-2.0-only" })
 vim.keymap.set("n", "<F1>a", headers.apache_header, { silent = true, desc = "Header: Apache 2.0" })
 vim.keymap.set("n", "<F1>p", headers.private_header, { silent = true, desc = "Header: proprietary/private" })
 
