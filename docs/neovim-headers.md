@@ -28,7 +28,7 @@ PHP files start with `<?php`, XML files with an XML declaration, and HTML files 
 
 For safety, existing files (including empty ones), copied or moved files, nonempty buffers, and failed Oil operations are not given new headers. Files created externally while Neovim was closed are also not treated as new. The automation does not invent timestamps to guess whether an empty file was recently created.
 
-The `F1 + m` mapping remains available for manually inserting a header in an existing file. `F1 + f`, `F1 + a`, and `F1 + p` remain unchanged.
+The `F1 + m` mapping remains available for manually inserting an MIT header. `F1 + g` inserts `GPL-2.0-only`, replacing the existing SPDX identifier when a matching Ava Info Conseils MIT/Apache/GPL header is already present at the top of the file. This avoids stacking contradictory headers after automatic MIT insertion. `F1 + f`, `F1 + a`, and `F1 + p` remain unchanged.
 
 ## Test
 
