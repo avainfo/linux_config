@@ -81,6 +81,37 @@ vim.cmd.close()
 
 assert(new_file("README.md") == "", "Unsupported file extensions must remain untouched")
 
+
+local new_gpl = new_file("gpl_new.c")
+assert_contains(new_gpl, "SPDX-License-Identifier: MIT")
+header.gpl_header()
+local switched = buffer_text()
+assert_contains(switched, "SPDX-License-Identifier: GPL-2.0-only")
+assert(not switched:find("SPDX-License-Identifier: MIT", 1, true), "Default MIT must be replaced")
+assert(select(2, switched:gsub("SPDX%-License%-Identifier:", "")) == 1, "Do not duplicate SPDX headers")
+header.gpl_header()
+assert(buffer_text() == switched, "Running GPL header twice must not duplicate it")
+
+vim.cmd.write()
+reset()
+vim.cmd.edit(vim.fn.fnameescape(tmpdir .. "/gpl_new.c"))
+header.gpl_header()
+assert(buffer_text() == switched, "Switching GPL after reopening must not duplicate it")
+
+local new_py = new_file("gpl_new.py")
+assert_contains(new_py, "SPDX-License-Identifier: MIT")
+header.gpl_header()
+assert_contains(buffer_text(), "# SPDX-License-Identifier: GPL-2.0-only")
+assert(not buffer_text():find("SPDX-License-Identifier: MIT", 1, true))
+
+vim.fn.writefile({ "int number = 1;" }, tmpdir .. "/gpl_existing.cpp")
+reset()
+vim.cmd.edit(vim.fn.fnameescape(tmpdir .. "/gpl_existing.cpp"))
+header.gpl_header()
+assert_contains(buffer_text(), "SPDX-License-Identifier: GPL-2.0-only")
+assert_contains(buffer_text(), "int number = 1;")
+
+
 local oilfile = tmpdir .. "/oil_created.c"
 vim.fn.writefile({}, oilfile)
 vim.api.nvim_exec_autocmds("User", {
