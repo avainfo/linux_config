@@ -366,6 +366,67 @@ function M.mit_header(replace_empty)
 	}, replace_empty, prelude)
 end
 
+-- Switching to GPL on a newly created file replaces its default MIT
+-- identifier instead of stacking two contradictory license headers.
+local function replace_ava_spdx(identifier)
+	local lines = vim.api.nvim_buf_get_lines(0, 0, 20, false)
+	local ava = M.identity.ava
+	local found_company = false
+	local found_author = false
+	local spdx_row
+	local existing_license
+
+	for i, line in ipairs(lines) do
+		if line:find(ava.company, 1, true) then
+			found_company = true
+		end
+		if line:find("Author: " .. ava.author, 1, true) then
+			found_author = true
+		end
+		local license = line:match("SPDX%-License%-Identifier:%s*([%w%.%+%-]+)")
+		if license then
+			spdx_row = i
+			existing_license = license
+		end
+	end
+
+	if not found_company or not found_author or not spdx_row then
+		return false
+	end
+	if existing_license == identifier then
+		return true
+	end
+	if existing_license ~= "MIT" and existing_license ~= "Apache-2.0" and existing_license ~= "GPL-2.0-only" then
+		return false
+	end
+
+	local updated = lines[spdx_row]:gsub(
+		"SPDX%-License%-Identifier:%s*" .. vim.pesc(existing_license),
+		"SPDX-License-Identifier: " .. identifier,
+		1
+	)
+	vim.api.nvim_buf_set_lines(0, spdx_row - 1, spdx_row, false, { updated })
+	return true
+end
+
+function M.gpl_header()
+	if replace_ava_spdx("GPL-2.0-only") then
+		return
+	end
+
+	local ava = M.identity.ava
+	insert_plain_header({
+		ava.company,
+		"",
+		"Author: " .. ava.author,
+		"Contact: " .. ava.contact,
+		"",
+		"Copyright (c) " .. os.date("%Y") .. " " .. ava.author,
+		"",
+		"SPDX-License-Identifier: GPL-2.0-only",
+	})
+end
+
 function M.apache_header()
 	local ava = M.identity.ava
 	insert_plain_header({
