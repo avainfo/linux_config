@@ -291,7 +291,7 @@ function M.fix_merge_conflict()
 	end
 end
 
-local function insert_plain_header(lines)
+local function insert_plain_header(lines, replace_empty, prelude)
 	pick_filetype_tokens()
 
 	local bufnr = 0
@@ -333,11 +333,27 @@ local function insert_plain_header(lines)
 	end
 
 	table.insert(out, "")
-	vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, out)
+	if prelude then
+		for i = #prelude, 1, -1 do
+			table.insert(out, 1, prelude[i])
+		end
+	end
+	vim.api.nvim_buf_set_lines(bufnr, 0, replace_empty and -1 or 0, false, out)
 end
 
-function M.mit_header()
+function M.mit_header(replace_empty)
 	local ava = M.identity.ava
+	local prelude
+	if replace_empty then
+		local name = filename():lower()
+		if name:match("%.php$") then
+			prelude = { "<?php", "" }
+		elseif name:match("%.xml$") then
+			prelude = { '<?xml version="1.0" encoding="UTF-8"?>', "" }
+		elseif name:match("%.html?$") then
+			prelude = { "<!DOCTYPE html>", "" }
+		end
+	end
 	insert_plain_header({
 		ava.company,
 		"",
@@ -347,7 +363,7 @@ function M.mit_header()
 		"Copyright (c) " .. os.date("%Y") .. " " .. ava.author,
 		"",
 		"SPDX-License-Identifier: MIT",
-	})
+	}, replace_empty, prelude)
 end
 
 function M.apache_header()
@@ -385,6 +401,85 @@ function M.private_header()
 	})
 end
 
+-- New, empty files only. Oil creates its files before opening them, so
+-- BufNewFile alone cannot reliably distinguish Oil creations from old empty files.
+local oil_created = {}
+
+local function file_key(name)
+	if name == "" then
+		return nil
+	end
+	if name:sub(1, 6) == "oil://" then
+		name = name:sub(7)
+	elseif name:find("://", 1, true) then
+		return name
+	end
+	return vim.fs.normalize(vim.fn.fnamemodify(name, ":p"))
+end
+
+local function has_header_filetype(name)
+	local basename = name:match("([^/]+)$") or name
+	for _, spec in ipairs(M.types) do
+		if vim.regex(spec[1]):match_str(basename) then
+			return true
+		end
+	end
+	return false
+end
+
+local function insert_for_new_file(bufnr)
+	if not vim.api.nvim_buf_is_valid(bufnr) or not vim.api.nvim_buf_is_loaded(bufnr) then
+		return
+	end
+
+	local name = vim.api.nvim_buf_get_name(bufnr)
+	if not has_header_filetype(name) then
+		return
+	end
+
+	local opts = vim.bo[bufnr]
+	if not opts.modifiable or opts.modified or (opts.buftype ~= "" and opts.buftype ~= "acwrite") then
+		return
+	end
+
+	if vim.api.nvim_buf_line_count(bufnr) ~= 1
+		or vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] ~= ""
+	then
+		return
+	end
+
+	vim.api.nvim_buf_call(bufnr, function()
+		M.mit_header(true)
+	end)
+
+	-- Leave the cursor where the next line of code should be written.
+	if vim.api.nvim_get_current_buf() == bufnr then
+		vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(bufnr), 0 })
+	end
+end
+
+local function track_oil_creations(args)
+	if not args.data or args.data.err then
+		return
+	end
+	for _, action in ipairs(args.data.actions or {}) do
+		if action.type == "create" and action.entry_type == "file" then
+			local key = file_key(action.url)
+			if key then
+				oil_created[key] = true
+			end
+		end
+	end
+end
+
+local function finish_oil_creation(args)
+	local key = file_key(vim.api.nvim_buf_get_name(args.buf))
+	if key and oil_created[key] then
+		oil_created[key] = nil
+		insert_for_new_file(args.buf)
+	end
+end
+
 function M.setup(opts)
 	opts = opts or {}
 
@@ -418,6 +513,37 @@ function M.setup(opts)
 		callback = function()
 			M.fix_merge_conflict()
 		end,
+	})
+	vim.api.nvim_create_autocmd("BufNewFile", {
+		group = aug,
+		callback = function(args)
+			-- Oil SSH file reads are asynchronous; wait for OilActionsPost + BufReadPost.
+			if not args.file:find("://", 1, true) then
+				insert_for_new_file(args.buf)
+			end
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("BufFilePost", {
+		group = aug,
+		callback = function(args)
+			-- Covers :enew followed by :file new.cpp (not existing files).
+			local name = vim.api.nvim_buf_get_name(args.buf)
+			if name ~= "" and not name:find("://", 1, true) and not vim.uv.fs_stat(name) then
+				insert_for_new_file(args.buf)
+			end
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("User", {
+		group = aug,
+		pattern = "OilActionsPost",
+		callback = track_oil_creations,
+	})
+
+	vim.api.nvim_create_autocmd("BufReadPost", {
+		group = aug,
+		callback = finish_oil_creation,
 	})
 end
 
