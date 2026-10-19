@@ -16,6 +16,7 @@ vim.keymap.set("x", "<leader>y", function()
 	local mode = vim.fn.mode()
 	local selection = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = mode })
 	vim.fn.setreg("+", selection, mode)
+	vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "n", false)
 end, { desc = "Copy selection to system clipboard" })
 
 vim.keymap.set("n", "<leader>y", function()
