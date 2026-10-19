@@ -103,3 +103,4 @@ Check the `docs/` folder for more details:
 - [How to Restore Backups](docs/restore.md)
 - [Crash Analysis Workflow](docs/crash-analysis-workflow.md)
 - [Neovim GDB Debugging](docs/neovim-debugging.md)
+- [Automatic MIT Headers in Neovim](docs/neovim-headers.md)
