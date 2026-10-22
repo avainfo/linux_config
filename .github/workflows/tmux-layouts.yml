@@ -1,0 +1,27 @@
+name: tmux workspace commands
+
+on:
+  push:
+    paths:
+      - dotfiles/zsh/.zshrc
+      - tests/zsh/tmux_layouts.zsh
+      - .github/workflows/tmux-layouts.yml
+  pull_request:
+    paths:
+      - dotfiles/zsh/.zshrc
+      - tests/zsh/tmux_layouts.zsh
+      - .github/workflows/tmux-layouts.yml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install zsh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh
+      - name: Check zsh syntax
+        run: zsh -n dotfiles/zsh/.zshrc
+      - name: Exercise tmux workspace functions with mocked tmux
+        run: zsh -f tests/zsh/tmux_layouts.zsh
