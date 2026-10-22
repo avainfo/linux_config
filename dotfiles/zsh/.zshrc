@@ -478,7 +478,9 @@ ts() {
 # Reparse the current sub-command so Zsh's normal command/argument completion
 # works for nvim paths, ssh host aliases, etc. after each '--' separator.
 _tmux_workspace_complete() {
-    emulate -L zsh
+    # Zsh 5.9's _files can evaluate *:globbed-files when extendedglob is off.
+    # Localize the option to completion so the user's shell settings stay intact.
+    emulate -L zsh -o extendedglob
     local start=2 i
     local -a segment
 
