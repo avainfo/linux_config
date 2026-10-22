@@ -5,11 +5,13 @@ on:
     paths:
       - dotfiles/zsh/.zshrc
       - tests/zsh/tmux_layouts.zsh
+      - tests/zsh/tmux_completion_pty.py
       - .github/workflows/tmux-layouts.yml
   pull_request:
     paths:
       - dotfiles/zsh/.zshrc
       - tests/zsh/tmux_layouts.zsh
+      - tests/zsh/tmux_completion_pty.py
       - .github/workflows/tmux-layouts.yml
 
 jobs:
@@ -25,3 +27,5 @@ jobs:
         run: zsh -n dotfiles/zsh/.zshrc
       - name: Exercise tmux workspace functions with mocked tmux
         run: zsh -f tests/zsh/tmux_layouts.zsh
+      - name: Verify interactive Zsh Tab completion
+        run: python3 tests/zsh/tmux_completion_pty.py
