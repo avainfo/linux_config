@@ -24,6 +24,9 @@ esac
 MOCK
 chmod +x "$local_tmp/bin/tmux"
 
+# Force tmux calls to the mock even when the runner has tmux preinstalled.
+tmux() { "$local_tmp/bin/tmux" "$@" }
+
 # Source only the workspace functions, not the interactive zsh login setup.
 sed -n '/^# General-purpose tmux splits;/,/^# Browse remote files via Oil/{
     /^# Browse remote files via Oil/d
