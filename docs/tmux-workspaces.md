@@ -7,12 +7,14 @@ The aliases `vim=nvim`, `dvim`, and `tvim` remain available. The new `dv`, `dh`,
 | `dv vim .` | Two equal top/bottom panes, both running `vim .` |
 | `dh vim .` | Two equal left/right panes, both running `vim .` |
 | `dv 'ssh causaltrace'` | Two top/bottom SSH panes |
-| `ts 'vim .' 'ssh causaltrace'` | Vim on the left; two SSH panes stacked on the right |
-| `ts 'vim .' 'ssh causaltrace' 'ssh other-host'` | Vim on the left; different commands in the top-right and bottom-right panes |
+| `ts vim . -- ssh causaltrace` | Vim on the left; two SSH panes stacked on the right, with Tab completion |
+| `ts vim . -- ssh causaltrace -- ssh other-host` | Vim on the left; different commands in the top-right and bottom-right panes |
 
 For `dv` and `dh`, pass a single quoted **shell command** if it contains spaces, pipes or shell operators. Unquoted arguments such as `dv vim .` are escaped and joined for you.
 
-For `ts`, supply **two or three quoted shell commands**. When the third is omitted, the second is duplicated in both right-hand panes.
+For `ts`, **separate pane commands with `--`**. You can then complete program names, file paths and SSH aliases with **Tab** as usual (for example after `vim`, or after `ssh`). When the third pane command is omitted, the second is duplicated in both right-hand panes.
+
+Older syntax such as `ts 'vim .' 'ssh causaltrace'` remains supported. Quoting may still be necessary inside an individual command for arguments containing spaces or for shell operators such as pipes; `--` is reserved as a pane separator.
 
 ## Behavior
 
