@@ -308,6 +308,124 @@ _tmux_nvim_layout() {
 dvim() { _tmux_nvim_layout dvim "$@" }
 tvim() { _tmux_nvim_layout tvim "$@" }
 
+# General-purpose tmux splits; start commands in shells so panes stay open.
+_tmux_workspace_send() {
+    local pane="$1" command_line="$2"
+    tmux send-keys -l -t "$pane" -- "$command_line" &&
+        tmux send-keys -t "$pane" Enter
+}
+
+_tmux_workspace_cleanup() {
+    local first="$1" session="$2"
+    if [[ -n "$session" ]]; then
+        tmux kill-session -t "$session" >/dev/null 2>&1
+    else
+        tmux kill-window -t "$first" >/dev/null 2>&1
+    fi
+}
+
+_tmux_workspace() {
+    emulate -L zsh
+    local layout="$1" command_left="$2" command_right="${3-}" command_bottom="${4-}"
+    local first second third="" session="" orientation=""
+    local -a panes commands
+    local i
+
+    if ! command -v tmux >/dev/null 2>&1; then
+        print -u2 "dv/dh/ts: tmux must be installed"
+        return 1
+    fi
+
+    if [[ -n "${TMUX:-}" ]]; then
+        first="$(tmux new-window -P -F '#{pane_id}' -n "$layout" -c "$PWD")" || return 1
+    else
+        session="${layout}-$-${RANDOM}"
+        first="$(tmux new-session -d -P -F '#{pane_id}' -s "$session" -n "$layout" -c "$PWD")" || return 1
+    fi
+
+    # tmux -v = top/bottom; tmux -h = left/right.
+    case "$layout" in
+        dv) orientation="-v" ;;
+        dh|ts) orientation="-h" ;;
+    esac
+
+    if [[ "$layout" == "ts" ]]; then
+        second="$(tmux split-window -h -l '45%' -P -F '#{pane_id}' -t "$first" -c "$PWD")" || {
+            _tmux_workspace_cleanup "$first" "$session"
+            return 1
+        }
+        third="$(tmux split-window -v -l '50%' -P -F '#{pane_id}' -t "$second" -c "$PWD")" || {
+            _tmux_workspace_cleanup "$first" "$session"
+            return 1
+        }
+    else
+        second="$(tmux split-window "$orientation" -l '50%' -P -F '#{pane_id}' -t "$first" -c "$PWD")" || {
+            _tmux_workspace_cleanup "$first" "$session"
+            return 1
+        }
+    fi
+
+    panes=("$first" "$second")
+    commands=("$command_left" "$command_right")
+    if [[ "$layout" == "ts" ]]; then
+        panes+=("$third")
+        commands+=("$command_bottom")
+    fi
+
+    for (( i=1; i<=${#panes}; i++ )); do
+        if ! _tmux_workspace_send "${panes[i]}" "${commands[i]}"; then
+            print -u2 "$layout: could not start a command"
+            _tmux_workspace_cleanup "$first" "$session"
+            return 1
+        fi
+    done
+
+    tmux select-pane -t "$first" || return 1
+    [[ -z "$session" ]] || tmux attach-session -t "$session"
+}
+
+# One string is a shell command; multiple args are safely quoted individually.
+_tmux_duplicate() {
+    emulate -L zsh
+    local layout="$1" command_line="" arg
+    shift
+
+    if (( $# == 0 )); then
+        print -u2 "Usage: $layout <command> [args...] | $layout '<shell command>'"
+        return 2
+    fi
+
+    if (( $# == 1 )); then
+        command_line="$1"
+    else
+        for arg in "$@"; do
+            [[ -z "$command_line" ]] || command_line+=" "
+            command_line+="${(q)arg}"
+        done
+    fi
+
+    [[ -n "$command_line" ]] || return 2
+    _tmux_workspace "$layout" "$command_line" "$command_line"
+}
+
+dv() { _tmux_duplicate dv "$@" }
+dh() { _tmux_duplicate dh "$@" }
+
+# ts 'vim .' 'ssh causaltrace' ['ssh causaltrace']
+# The third command is optional and defaults to the second.
+ts() {
+    emulate -L zsh
+    if (( $# < 2 || $# > 3 )) || [[ -z "$1" || -z "$2" ]]; then
+        print -u2 "Usage: ts '<left command>' '<right-top command>' ['<right-bottom command>']"
+        return 2
+    fi
+    if (( $# == 3 )) && [[ -z "$3" ]]; then
+        print -u2 "ts: the third command cannot be empty"
+        return 2
+    fi
+    _tmux_workspace ts "$1" "$2" "${3:-$2}"
+}
+
 # Browse remote files via Oil's SSH adapter using an SSH host alias.
 svim() {
     if (( $# != 1 )) || [[ -z "$1" ]]; then
