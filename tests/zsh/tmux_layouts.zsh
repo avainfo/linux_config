@@ -69,6 +69,62 @@ ts 'vim .' 'ssh causaltrace' 'ssh secondary'
 [[ "$(grep -Fc -- '-- ssh causaltrace' "$TMUX_TEST_LOG")" == 1 ]]
 [[ "$(grep -Fc -- '-- ssh secondary' "$TMUX_TEST_LOG")" == 1 ]]
 
+# Unquoted argument groups, separated with '--', keep native completion-friendly words.
+: > "$TMUX_TEST_LOG"
+ts vim . -- ssh causaltrace
+[[ "$(grep -Fc -- '-- vim .' "$TMUX_TEST_LOG")" == 1 ]]
+[[ "$(grep -Fc -- '-- ssh causaltrace' "$TMUX_TEST_LOG")" == 2 ]]
+
+: > "$TMUX_TEST_LOG"
+ts vim . -- ssh causaltrace -- ssh secondary
+[[ "$(grep -Fc -- '-- vim .' "$TMUX_TEST_LOG")" == 1 ]]
+[[ "$(grep -Fc -- '-- ssh causaltrace' "$TMUX_TEST_LOG")" == 1 ]]
+[[ "$(grep -Fc -- '-- ssh secondary' "$TMUX_TEST_LOG")" == 1 ]]
+
+: > "$TMUX_TEST_LOG"
+ts vim 'file with spaces.c' -- ssh causaltrace
+contains "file\ with\ spaces.c"
+
+# Invalid separators must fail before creating any tmux window.
+for case_name in leading trailing doubled too_many; do
+    : > "$TMUX_TEST_LOG"
+    case "$case_name" in
+        leading)   args=(-- ssh causaltrace) ;;
+        trailing)  args=(vim . --) ;;
+        doubled)   args=(vim . -- -- ssh causaltrace) ;;
+        too_many)  args=(vim . -- ssh first -- ssh second -- htop) ;;
+    esac
+    if ts "${args[@]}"; then
+        print -u2 "ts accepted bad argument shape: $case_name"
+        exit 1
+    fi
+    [[ ! -s "$TMUX_TEST_LOG" ]]
+done
+
+# Verify the completion helper delegates only the active command segment.
+_normal() {
+    print -r -- "current=$CURRENT words=${(j:|:)words}" > "$local_tmp/completion.log"
+}
+words=(ts vim .)
+CURRENT=3
+_tmux_workspace_complete
+grep -Fx 'current=2 words=vim|.' "$local_tmp/completion.log" >/dev/null
+
+words=(ts vim . -- ssh cau)
+CURRENT=6
+_tmux_workspace_complete
+grep -Fx 'current=2 words=ssh|cau' "$local_tmp/completion.log" >/dev/null
+
+words=(ts vim . -- ssh causaltrace -- ht)
+CURRENT=8
+_tmux_workspace_complete
+grep -Fx 'current=1 words=ht' "$local_tmp/completion.log" >/dev/null
+
+words=(dv vim demo)
+CURRENT=3
+_tmux_workspace_complete
+grep -Fx 'current=2 words=vim|demo' "$local_tmp/completion.log" >/dev/null
+
 : > "$TMUX_TEST_LOG"
 dv vim 'file with spaces.c'
 contains "file\\ with\\ spaces.c"
