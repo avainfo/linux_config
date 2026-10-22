@@ -65,7 +65,7 @@ with tempfile.TemporaryDirectory(prefix="ava-tmux-tab-") as temp:
     try:
         receive_until(master, b"%")
         setup = (
-            "autoload -Uz compinit && compinit -D; "
+            "autoload -Uz compinit && compinit -i -D; "
             "source ./layout-functions.zsh; "
             "compdef _files vim; "
             "unsetopt extendedglob; "
@@ -75,7 +75,7 @@ with tempfile.TemporaryDirectory(prefix="ava-tmux-tab-") as temp:
             "print -r -- READY\r"
         )
         type_keys(master, setup.encode())
-        receive_until(master, b"READY")
+        receive_until(master, b"\x1b[JTEST> ")
 
         # Reproduces the user case with _normal -> _files -> '*:globbed-files'.
         type_keys(master, b"ts vim sample_comple\t\r")
