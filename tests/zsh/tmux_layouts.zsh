@@ -103,11 +103,14 @@ done
 
 # Verify the completion helper delegates only the active command segment.
 _normal() {
+    [[ -o extendedglob ]] || { print -u2 "extendedglob disabled inside completion"; return 1; }
     print -r -- "current=$CURRENT words=${(j:|:)words}" > "$local_tmp/completion.log"
 }
+unsetopt extendedglob
 words=(ts vim .)
 CURRENT=3
 _tmux_workspace_complete
+[[ ! -o extendedglob ]] || { print -u2 "completion leaked extendedglob into the calling shell"; exit 1; }
 grep -Fx 'current=2 words=vim|.' "$local_tmp/completion.log" >/dev/null
 
 words=(ts vim . -- ssh cau)
