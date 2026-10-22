@@ -104,3 +104,4 @@ Check the `docs/` folder for more details:
 - [Crash Analysis Workflow](docs/crash-analysis-workflow.md)
 - [Neovim GDB Debugging](docs/neovim-debugging.md)
 - [Automatic MIT Headers in Neovim](docs/neovim-headers.md)
+- [Tmux Workspaces: dv / dh / ts](docs/tmux-workspaces.md)
