@@ -411,20 +411,93 @@ _tmux_duplicate() {
 dv() { _tmux_duplicate dv "$@" }
 dh() { _tmux_duplicate dh "$@" }
 
-# ts 'vim .' 'ssh causaltrace' ['ssh causaltrace']
-# The third command is optional and defaults to the second.
+# Modern syntax (Tab friendly): ts vim . -- ssh causaltrace
+# Third pane optional: ts vim . -- ssh causaltrace -- htop
+# Legacy syntax ('vim .' 'ssh causaltrace') still works.
+_tmux_workspace_quote() {
+    emulate -L zsh
+    local arg command_line=""
+    for arg in "$@"; do
+        [[ -z "$command_line" ]] || command_line+=" "
+        command_line+="${(q)arg}"
+    done
+    print -r -- "$command_line"
+}
+
 ts() {
     emulate -L zsh
-    if (( $# < 2 || $# > 3 )) || [[ -z "$1" || -z "$2" ]]; then
-        print -u2 "Usage: ts '<left command>' '<right-top command>' ['<right-bottom command>']"
+    local -a pane_commands=() command_args=()
+    local arg contains_separator=0
+
+    for arg in "$@"; do
+        if [[ "$arg" == "--" ]]; then
+            contains_separator=1
+            break
+        fi
+    done
+
+    if (( ! contains_separator )); then
+        # Compatibility with the original quoted, two/three-command syntax.
+        if (( $# < 2 || $# > 3 )) || [[ -z "$1" || -z "$2" ]] ||
+            { (( $# == 3 )) && [[ -z "$3" ]]; }; then
+            print -u2 "Usage: ts <left command> -- <right command> [-- <bottom-right command>]"
+            print -u2 "Legacy: ts 'vim .' 'ssh causaltrace' ['ssh other-host']"
+            return 2
+        fi
+        _tmux_workspace ts "$1" "$2" "${3:-$2}"
+        return
+    fi
+
+    for arg in "$@"; do
+        if [[ "$arg" == "--" ]]; then
+            if (( ${#command_args} == 0 )); then
+                print -u2 "ts: empty command before '--'"
+                return 2
+            fi
+            pane_commands+=("$(_tmux_workspace_quote "${command_args[@]}")")
+            command_args=()
+        else
+            command_args+=("$arg")
+        fi
+    done
+
+    if (( ${#command_args} == 0 )); then
+        print -u2 "ts: missing command after '--'"
         return 2
     fi
-    if (( $# == 3 )) && [[ -z "$3" ]]; then
-        print -u2 "ts: the third command cannot be empty"
+    pane_commands+=("$(_tmux_workspace_quote "${command_args[@]}")")
+
+    if (( ${#pane_commands} < 2 || ${#pane_commands} > 3 )); then
+        print -u2 "Usage: ts <left command> -- <right command> [-- <bottom-right command>]"
         return 2
     fi
-    _tmux_workspace ts "$1" "$2" "${3:-$2}"
+
+    _tmux_workspace ts "${pane_commands[1]}" "${pane_commands[2]}" "${pane_commands[3]:-${pane_commands[2]}}"
 }
+
+# Reparse the current sub-command so Zsh's normal command/argument completion
+# works for nvim paths, ssh host aliases, etc. after each '--' separator.
+_tmux_workspace_complete() {
+    emulate -L zsh
+    local start=2 i
+    local -a segment
+
+    if [[ "${words[1]}" == "ts" ]]; then
+        for (( i=2; i<CURRENT; i++ )); do
+            [[ "${words[i]}" == "--" ]] && start=$(( i + 1 ))
+        done
+    fi
+
+    segment=("${(@)words[start,-1]}")
+    words=("${(@)segment}")
+    (( CURRENT = CURRENT - start + 1 ))
+    _normal
+}
+
+# Oh My Zsh initializes compdef before this section is sourced.
+if (( ${+functions[compdef]} )); then
+    compdef _tmux_workspace_complete dv dh ts
+fi
 
 # Browse remote files via Oil's SSH adapter using an SSH host alias.
 svim() {
