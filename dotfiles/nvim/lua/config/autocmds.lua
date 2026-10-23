@@ -39,6 +39,16 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.shiftwidth = 4
 		vim.opt_local.cindent = true
 
+		-- Make native 'gf' resolve project-local #include headers independently of clangd.
+		-- Absolute path works even if Neovim was launched from bpf/ or agent/.
+		local root = vim.fs.root(0, { "compile_commands.json", "Makefile", ".git" })
+		if root then
+			local include_dir = root .. "/include"
+			if vim.fn.isdirectory(include_dir) == 1 then
+				vim.opt_local.path:append(include_dir)
+			end
+		end
+
 		if vim.bo.modifiable then
 			vim.opt_local.comments = "sl:/*,mb:\\ *,elx:\\ *"
 		end
