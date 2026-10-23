@@ -1,0 +1,26 @@
+name: Neovim gf headers
+
+on:
+  push:
+    paths:
+      - dotfiles/nvim/lua/config/autocmds.lua
+      - tests/nvim/gf_project_headers.lua
+      - .github/workflows/nvim-gf.yml
+  pull_request:
+    paths:
+      - dotfiles/nvim/lua/config/autocmds.lua
+      - tests/nvim/gf_project_headers.lua
+      - .github/workflows/nvim-gf.yml
+
+jobs:
+  gf-headers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim 0.11.7
+        run: |
+          curl -fsSL https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
+          tar -xzf /tmp/nvim.tar.gz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Test native gf for project headers
+        run: nvim --headless -u NONE -l tests/nvim/gf_project_headers.lua
