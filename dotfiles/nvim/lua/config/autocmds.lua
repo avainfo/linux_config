@@ -32,7 +32,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	group = filetypes,
 	pattern = { "c", "cpp" },
-	callback = function()
+	callback = function(args)
 		vim.opt_local.expandtab = false
 		vim.opt_local.tabstop = 4
 		vim.opt_local.softtabstop = 4
@@ -41,7 +41,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 		-- Make native 'gf' resolve project-local #include headers independently of clangd.
 		-- Absolute path works even if Neovim was launched from bpf/ or agent/.
-		local root = vim.fs.root(0, { "compile_commands.json", "Makefile", ".git" })
+		local root = vim.fs.root(args.buf, { "compile_commands.json", "Makefile", ".git" })
 		if root then
 			local include_dir = root .. "/include"
 			if vim.fn.isdirectory(include_dir) == 1 then
