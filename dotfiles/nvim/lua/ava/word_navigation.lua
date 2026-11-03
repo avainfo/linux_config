@@ -20,4 +20,19 @@ function M.insert_right()
 	end
 end
 
+-- Extend a characterwise Visual selection to the final character of the
+-- current/next word. Visual mode is inclusive, unlike the Insert cursor.
+function M.visual_right()
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local line = vim.api.nvim_get_current_line()
+	if #line == 0 then
+		return
+	end
+	local end_col = M.end_of_word_col(line, cursor[2])
+	local target_col = math.min(#line - 1, end_col - 1)
+	if target_col > cursor[2] then
+		vim.api.nvim_win_set_cursor(0, { cursor[1], target_col })
+	end
+end
+
 return M
