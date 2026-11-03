@@ -7,6 +7,9 @@ vim.keymap.set("i", "<C-Left>", "<C-o>b", { noremap = true })
 vim.keymap.set("i", "<C-Right>", require("ava.word_navigation").insert_right, {
 	desc = "Move to end of word without crossing line",
 })
+vim.keymap.set("x", "<C-Right>", require("ava.word_navigation").visual_right, {
+	desc = "Extend selection to end of word without crossing line",
+})
 
 vim.keymap.set("n", "<C-Del>", "dw", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-Del>", "<C-o>dw", { noremap = true, silent = true })
