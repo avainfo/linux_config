@@ -24,6 +24,12 @@ return {
 				completion = {
 					completeopt = "menu,menuone,preview,noselect",
 				},
+				matching = {
+					-- Allow identifiers to match across snake_case fragments,
+					-- e.g. bpf_find_ -> bpf_object__find_map_by_name.
+					disallow_partial_fuzzy_matching = false,
+					disallow_symbol_nonprefix_matching = false,
+				},
 				snippet = {
 					expand = function(args)
 						luasnip.lsp_expand(args.body)
