@@ -1,0 +1,28 @@
+name: Neovim word navigation
+
+on:
+  push:
+    paths:
+      - dotfiles/nvim/lua/config/keymaps.lua
+      - dotfiles/nvim/lua/ava/word_navigation.lua
+      - tests/nvim/word_navigation.lua
+      - .github/workflows/nvim-word-navigation.yml
+  pull_request:
+    paths:
+      - dotfiles/nvim/lua/config/keymaps.lua
+      - dotfiles/nvim/lua/ava/word_navigation.lua
+      - tests/nvim/word_navigation.lua
+      - .github/workflows/nvim-word-navigation.yml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim 0.11.7
+        run: |
+          curl -fsSL https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
+          tar -xzf /tmp/nvim.tar.gz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Check Ctrl+Right word navigation
+        run: nvim --headless -u NONE -l tests/nvim/word_navigation.lua
