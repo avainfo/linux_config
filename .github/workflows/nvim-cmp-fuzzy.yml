@@ -1,0 +1,30 @@
+name: Neovim fuzzy completion
+
+on:
+  push:
+    paths:
+      - dotfiles/nvim/lua/plugins/cmp.lua
+      - tests/nvim/cmp_fuzzy_matching.lua
+      - .github/workflows/nvim-cmp-fuzzy.yml
+  pull_request:
+    paths:
+      - dotfiles/nvim/lua/plugins/cmp.lua
+      - tests/nvim/cmp_fuzzy_matching.lua
+      - .github/workflows/nvim-cmp-fuzzy.yml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim 0.11.7
+        run: |
+          curl -fsSL https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
+          tar -xzf /tmp/nvim.tar.gz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Download nvim-cmp source for matcher regression
+        run: |
+          git clone --depth=1 https://github.com/hrsh7th/nvim-cmp.git "$RUNNER_TEMP/nvim-cmp"
+          echo "CMP_SOURCE_DIR=$RUNNER_TEMP/nvim-cmp" >> "$GITHUB_ENV"
+      - name: Check fuzzy snake_case completion
+        run: nvim --headless -u NONE -l tests/nvim/cmp_fuzzy_matching.lua
