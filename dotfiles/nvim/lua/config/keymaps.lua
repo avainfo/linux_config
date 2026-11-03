@@ -4,7 +4,9 @@ vim.keymap.set("i", "<F2>", "<Esc><cmd>write<CR>i", { noremap = true, silent = t
 vim.keymap.set("n", "<C-Left>", "b", { noremap = true })
 vim.keymap.set("n", "<C-Right>", "w", { noremap = true })
 vim.keymap.set("i", "<C-Left>", "<C-o>b", { noremap = true })
-vim.keymap.set("i", "<C-Right>", "<C-o>w", { noremap = true })
+vim.keymap.set("i", "<C-Right>", require("ava.word_navigation").insert_right, {
+	desc = "Move to end of word without crossing line",
+})
 
 vim.keymap.set("n", "<C-Del>", "dw", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-Del>", "<C-o>dw", { noremap = true, silent = true })
