@@ -1,19 +1,15 @@
 return {
 	{
 		"ThePrimeagen/refactoring.nvim",
-		-- Keep compatibility with Neovim 0.11.7; current upstream requires 0.12.
+		-- This tested upstream revision supports Neovim 0.11; latest requires 0.12.
 		commit = "3c87abd5b1786cb0cf4810ac435211fac52a4a35",
 		dependencies = {
-			"nvim-lua/plenary.nvim",
+			"lewis6991/async.nvim",
 			"nvim-treesitter/nvim-treesitter",
 		},
 		keys = {
-			-- In Visual mode, select complete C/C++ statements, then type a name.
-			-- :Refactor extract provides a preview before applying changes.
-			{ "<leader>re", ":Refactor extract ", mode = "x", desc = "Extract selected code to function" },
-		},
-		opts = {
-			show_success_message = true,
+			-- Visual selection -> Space r e -> name the new function -> Enter.
+			{ "<leader>re", ":Refactor extract_func ", mode = "x", desc = "Extract selected code to function" },
 		},
 	},
 }
