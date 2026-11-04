@@ -1,0 +1,33 @@
+name: Neovim C refactoring integration
+
+on:
+  push:
+    paths:
+      - dotfiles/nvim/lua/plugins/refactoring.lua
+      - tests/nvim/refactoring_plugin.lua
+      - .github/workflows/nvim-refactoring.yml
+  pull_request:
+    paths:
+      - dotfiles/nvim/lua/plugins/refactoring.lua
+      - tests/nvim/refactoring_plugin.lua
+      - .github/workflows/nvim-refactoring.yml
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim 0.11.7
+        run: |
+          curl -fsSL https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
+          tar -xzf /tmp/nvim.tar.gz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Download refactoring.nvim and async.nvim
+        run: |
+          git clone --quiet --depth 1 https://github.com/lewis6991/async.nvim.git "$RUNNER_TEMP/async.nvim"
+          git clone --quiet https://github.com/ThePrimeagen/refactoring.nvim.git "$RUNNER_TEMP/refactoring.nvim"
+          git -C "$RUNNER_TEMP/refactoring.nvim" checkout --quiet 3c87abd5b1786cb0cf4810ac435211fac52a4a35
+          echo "ASYNC_PLUGIN_DIR=$RUNNER_TEMP/async.nvim" >> "$GITHUB_ENV"
+          echo "REFACTOR_PLUGIN_DIR=$RUNNER_TEMP/refactoring.nvim" >> "$GITHUB_ENV"
+      - name: Smoke-test extract function integration
+        run: nvim --headless -u NONE -l tests/nvim/refactoring_plugin.lua
