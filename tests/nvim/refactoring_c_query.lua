@@ -46,5 +46,28 @@ for _ in query:iter_matches(trees[1]:root(), 0) do
 end
 assert(matches > 0, "C refactoring query compiled but found no references in sample")
 
-print("C refactoring queries compile and match C source successfully")
+-- Exercise the actual :Refactor extract_func workflow against a C buffer.
+-- This catches query failures that a plugin-loading smoke test cannot detect.
+vim.api.nvim_buf_set_lines(0, 0, -1, false, {
+	"void render(void) {",
+	'    puts("first");',
+	'    puts("second");',
+	"}",
+})
+vim.bo.filetype = "c"
+vim.bo.expandtab = true
+vim.bo.shiftwidth = 4
+vim.api.nvim_win_set_cursor(0, { 2, 4 })
+vim.cmd("runtime plugin/command.lua")
+local keys = vim.api.nvim_replace_termcodes("Vj:Refactor extract_func print_block<CR>", true, false, true)
+vim.api.nvim_feedkeys(keys, "xt", false)
+
+local success = vim.wait(4000, function()
+	local lines = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+	return lines:find("void print_block(", 1, true) ~= nil
+end, 20)
+local changed = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+assert(success, "Extract Function did not create a C function:\n" .. changed)
+assert(changed:find("print_block();", 1, true), "Extract Function did not replace the selected body with a call:\n" .. changed)
+print("C Tree-sitter queries and real extract_func refactoring succeeded")
 vim.cmd.quitall({ bang = true })
