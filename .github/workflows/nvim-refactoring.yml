@@ -5,6 +5,8 @@ on:
     paths:
       - dotfiles/nvim/lua/plugins/refactoring.lua
       - tests/nvim/refactoring_plugin.lua
+      - tests/nvim/refactoring_c_query.lua
+      - dotfiles/nvim/queries/c/refactor_reference.scm
       - .github/workflows/nvim-refactoring.yml
   pull_request:
     paths:
@@ -31,3 +33,5 @@ jobs:
           echo "REFACTOR_PLUGIN_DIR=$RUNNER_TEMP/refactoring.nvim" >> "$GITHUB_ENV"
       - name: Smoke-test extract function integration
         run: nvim --headless -u NONE -l tests/nvim/refactoring_plugin.lua
+      - name: Validate C refactoring Tree-sitter queries
+        run: nvim --headless -u NONE -l tests/nvim/refactoring_c_query.lua
