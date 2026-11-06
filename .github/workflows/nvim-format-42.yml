@@ -1,0 +1,26 @@
+name: Neovim 42 formatting guard
+
+on:
+  push:
+    paths:
+      - dotfiles/nvim/lua/plugins/format.lua
+      - tests/nvim/format_42_scope.lua
+      - .github/workflows/nvim-format-42.yml
+  pull_request:
+    paths:
+      - dotfiles/nvim/lua/plugins/format.lua
+      - tests/nvim/format_42_scope.lua
+      - .github/workflows/nvim-format-42.yml
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim 0.11.7
+        run: |
+          curl -fsSL https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
+          tar -xzf /tmp/nvim.tar.gz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Check Space fm scope
+        run: nvim --headless -u NONE -l tests/nvim/format_42_scope.lua
