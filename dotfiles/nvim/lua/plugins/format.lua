@@ -50,12 +50,20 @@ return {
 			})
 
 			vim.keymap.set("n", "<leader>fm", function()
+				-- Match the same /42/ project scope used by config.norminette.
+				-- clang-format is not Norminette-compliant; never rewrite 42 files.
+				local path = vim.api.nvim_buf_get_name(0)
+				if path:find("/42/", 1, true) then
+					vim.notify("Formatting disabled in 42 projects; Norminette remains active", vim.log.levels.INFO)
+					return
+				end
+
 				conform.format({
 					lsp_fallback = true,
 					async = false,
 					timeout_ms = 1000,
 				})
-			end, { desc = "Format current file" })
+			end, { desc = "Format current file (disabled in 42 projects)" })
 		end,
 	},
 }
