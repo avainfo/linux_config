@@ -15,10 +15,14 @@ printf '%s\n' "$@" > "$VIM_TEST_LOG"
 MOCK
 chmod +x "$test_dir/bin/nvim"
 
-# Test the actual vim function from .zshrc without loading interactive setup.
-sed -n '/^vim() {/,/^}/p' dotfiles/zsh/.zshrc > "$test_dir/vim.zsh"
+# Reproduce a running Zsh shell with the old alias still in memory.
+# Source the actual unalias + vim function from .zshrc without interactive setup.
+sed -n '/^unalias vim /,/^}/p' dotfiles/zsh/.zshrc > "$test_dir/vim.zsh"
 [[ -s "$test_dir/vim.zsh" ]]
+alias vim=nvim
 source "$test_dir/vim.zsh"
+(( ! ${+aliases[vim]} )) || { print -u2 "Stale vim alias was not removed"; exit 1; }
+(( ${+functions[vim]} )) || { print -u2 "vim function not registered"; exit 1; }
 
 vim
 diff -u <(printf '%s\n' '.') "$VIM_TEST_LOG"
