@@ -28,6 +28,19 @@ return {
 				border = "rounded",
 			},
 			keymaps = {
+				-- Move five entries at a time in Oil, rather than scrolling a page.
+				["<S-Up>"] = {
+					desc = "Oil: move up 5 entries",
+					callback = function()
+						vim.cmd("normal! 5k")
+					end,
+				},
+				["<S-Down>"] = {
+					desc = "Oil: move down 5 entries",
+					callback = function()
+						vim.cmd("normal! 5j")
+					end,
+				},
 				["gd"] = {
 					desc = "Oil: toggle file details",
 					callback = function()
