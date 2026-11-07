@@ -66,7 +66,15 @@ alias ls='ls --color=auto'
 # 5. ALIASES
 # ============================================================
 alias rm="rm -i"
-alias vim="nvim"
+# Open the current directory when called without arguments, otherwise
+# forward every argument unchanged to Neovim (including filenames with spaces).
+vim() {
+    if (( $# == 0 )); then
+        command nvim .
+    else
+        command nvim "$@"
+    fi
+}
 alias gs="git status"
 alias py="python3"
 alias rpy="rm -rf __pycache__"
