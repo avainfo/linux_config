@@ -30,6 +30,11 @@ function M.visual_right()
 	end
 	local end_col = M.end_of_word_col(line, cursor[2])
 	local target_col = math.min(#line - 1, end_col - 1)
+	-- If we are already on the last character, jump to the next word.
+	if target_col <= cursor[2] then
+		end_col = M.end_of_word_col(line, cursor[2] + 1)
+		target_col = math.min(#line - 1, end_col - 1)
+	end
 	if target_col > cursor[2] then
 		vim.api.nvim_win_set_cursor(0, { cursor[1], target_col })
 	end

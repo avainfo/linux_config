@@ -33,6 +33,22 @@ nav.visual_right()
 eq(vim.api.nvim_win_get_cursor(0)[2], 11)
 eq(vim.api.nvim_win_get_cursor(0)[1], 1)
 
+-- Ctrl+Right must continue past the last character of a word in Visual mode.
+local typed_line = "Generator = Callable[[str, FunctionDefinition, Any], dict[str, ParameterValue]]"
+vim.api.nvim_buf_set_lines(0, 0, -1, false, { typed_line, "second line" })
+vim.api.nvim_win_set_cursor(0, { 1, 43 }) -- inside FunctionDefinition
+nav.visual_right()
+eq(vim.api.nvim_win_get_cursor(0)[2], 44) -- last n of FunctionDefinition
+
+for _, expected_col in ipairs({ 49, 56, 60, 76 }) do
+	nav.visual_right()
+	eq(vim.api.nvim_win_get_cursor(0)[2], expected_col)
+end
+-- End of line: do not wrap or move onto the closing brackets.
+nav.visual_right()
+eq(vim.api.nvim_win_get_cursor(0)[2], 76)
+eq(vim.api.nvim_win_get_cursor(0)[1], 1)
+
 -- Ensure the actual user key binding calls this function, while Ctrl+Left stays unchanged.
 require("config.keymaps")
 local right_map = vim.fn.maparg("<C-Right>", "i", false, true)
