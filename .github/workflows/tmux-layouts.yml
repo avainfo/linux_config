@@ -5,12 +5,14 @@ on:
     paths:
       - dotfiles/zsh/.zshrc
       - tests/zsh/tmux_layouts.zsh
+      - tests/zsh/vim_launcher.zsh
       - tests/zsh/tmux_completion_pty.py
       - .github/workflows/tmux-layouts.yml
   pull_request:
     paths:
       - dotfiles/zsh/.zshrc
       - tests/zsh/tmux_layouts.zsh
+      - tests/zsh/vim_launcher.zsh
       - tests/zsh/tmux_completion_pty.py
       - .github/workflows/tmux-layouts.yml
 
@@ -27,5 +29,7 @@ jobs:
         run: zsh -n dotfiles/zsh/.zshrc
       - name: Exercise tmux workspace functions with mocked tmux
         run: zsh -f tests/zsh/tmux_layouts.zsh
+      - name: Check vim default directory and exact argument forwarding
+        run: zsh -f tests/zsh/vim_launcher.zsh
       - name: Verify interactive Zsh Tab completion
         run: python3 tests/zsh/tmux_completion_pty.py
