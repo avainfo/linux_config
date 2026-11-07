@@ -40,8 +40,11 @@ assert(registered.formatters.ruff_42_format.inherit == "ruff_format", "Must reus
 assert(registered.format_on_save(1) == nil, "No Python format-on-save expected")
 
 local function buffer(file, ft)
-	local bufnr = vim.api.nvim_create_buf(true, false)
-	vim.api.nvim_buf_set_name(bufnr, file)
+	local bufnr = vim.fn.bufnr(file)
+	if bufnr == -1 then
+		bufnr = vim.api.nvim_create_buf(true, false)
+		vim.api.nvim_buf_set_name(bufnr, file)
+	end
 	vim.api.nvim_set_current_buf(bufnr)
 	vim.bo[bufnr].filetype = ft
 	return bufnr
