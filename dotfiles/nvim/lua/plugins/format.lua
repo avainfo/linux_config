@@ -4,6 +4,7 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local conform = require("conform")
+			local formatting_42 = require("ava.format_42")
 			local prettier_filetypes = {
 				json = true,
 				jsonc = true,
@@ -19,9 +20,21 @@ return {
 				["yaml.docker-compose"] = true,
 			}
 
+			local function non_42_formatter(bufnr, name)
+				if formatting_42.is_42_buffer(bufnr) then
+					return {}
+				end
+				return { name }
+			end
+
 			conform.setup({
 				formatters_by_ft = {
-					python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
+					python = function(bufnr)
+						if formatting_42.is_42_buffer(bufnr) then
+							return { "ruff_42_format", lsp_format = "never" }
+						end
+						return { "ruff_fix", "ruff_organize_imports", "ruff_format" }
+					end,
 					json = { "prettierd" },
 					jsonc = { "prettierd" },
 					javascript = { "prettierd" },
@@ -34,10 +47,22 @@ return {
 					markdown = { "prettierd" },
 					yaml = { "prettierd" },
 					["yaml.docker-compose"] = { "prettierd" },
-					c = { "clang-format" },
-					cpp = { "clang-format" },
+					c = function(bufnr)
+						return non_42_formatter(bufnr, "clang-format")
+					end,
+					cpp = function(bufnr)
+						return non_42_formatter(bufnr, "clang-format")
+					end,
 					rust = { "rustfmt" },
 					lua = { "stylua" },
+				},
+				formatters = {
+					ruff_42_format = {
+						inherit = "ruff_format",
+						prepend_args = function(_, ctx)
+							return formatting_42.ruff_prepend_args(ctx.filename)
+						end,
+					},
 				},
 				format_on_save = function(bufnr)
 					if prettier_filetypes[vim.bo[bufnr].filetype] then
@@ -49,21 +74,9 @@ return {
 				end,
 			})
 
-			vim.keymap.set("n", "<leader>fm", function()
-				-- Match the same /42/ project scope used by config.norminette.
-				-- clang-format is not Norminette-compliant; never rewrite 42 files.
-				local path = vim.api.nvim_buf_get_name(0)
-				if path:find("/42/", 1, true) then
-					vim.notify("Formatting disabled in 42 projects; Norminette remains active", vim.log.levels.INFO)
-					return
-				end
-
-				conform.format({
-					lsp_fallback = true,
-					async = false,
-					timeout_ms = 1000,
-				})
-			end, { desc = "Format current file (disabled in 42 projects)" })
+			vim.keymap.set("n", "<leader>fm", formatting_42.format_current_file, {
+				desc = "Format current file (42 Python: Ruff format only)",
+			})
 		end,
 	},
 }

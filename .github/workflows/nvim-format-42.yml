@@ -3,11 +3,15 @@ name: Neovim 42 formatting guard
 on:
   push:
     paths:
+      - dotfiles/nvim/lua/ava/format_42.lua
+      - dotfiles/nvim/lua/config/lsp.lua
       - dotfiles/nvim/lua/plugins/format.lua
       - tests/nvim/format_42_scope.lua
       - .github/workflows/nvim-format-42.yml
   pull_request:
     paths:
+      - dotfiles/nvim/lua/ava/format_42.lua
+      - dotfiles/nvim/lua/config/lsp.lua
       - dotfiles/nvim/lua/plugins/format.lua
       - tests/nvim/format_42_scope.lua
       - .github/workflows/nvim-format-42.yml
@@ -22,5 +26,10 @@ jobs:
           curl -fsSL https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
           tar -xzf /tmp/nvim.tar.gz -C "$RUNNER_TEMP"
           echo "$RUNNER_TEMP/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
-      - name: Check Space fm scope
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned Ruff
+        run: python -m pip install ruff==0.14.4
+      - name: Check 42 Python formatting, LSP, and non-regressions
         run: nvim --headless -u NONE -l tests/nvim/format_42_scope.lua

@@ -52,6 +52,10 @@ function M.on_attach(_, bufnr)
 	map("n", "<leader>f", function()
 		vim.lsp.buf.format({ async = true })
 	end, "LSP format")
+
+	-- A buffer-local <leader>f would otherwise shadow the longer global
+	-- <leader>fm mapping. Keep both shortcuts functional after LSP attach.
+	map("n", "<leader>fm", require("ava.format_42").format_current_file, "Format current file (Conform)")
 end
 
 return M
