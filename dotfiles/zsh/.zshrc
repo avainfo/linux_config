@@ -66,6 +66,9 @@ alias ls='ls --color=auto'
 # 5. ALIASES
 # ============================================================
 alias rm="rm -i"
+# The old vim=nvim alias may still exist in an already running shell.
+# Remove it before defining the function so "source ~/.zshrc" is safe.
+unalias vim 2>/dev/null
 # Open the current directory when called without arguments, otherwise
 # forward every argument unchanged to Neovim (including filenames with spaces).
 vim() {
