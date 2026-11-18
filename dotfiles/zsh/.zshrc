@@ -218,6 +218,7 @@ rlkeyboard() {
     command -v node >/dev/null 2>&1 || { echo "Node.js not found."; return 1; }
     echo "Node: $(node -v)" && echo "Syncing GMK87 keyboard time..."
     cd "$repo" && sudo env "PATH=$PATH" "NVM_DIR=$NVM_DIR" npm run timesync
+	cd "-"
 }
 
 gpub() {
