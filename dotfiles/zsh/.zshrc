@@ -645,3 +645,7 @@ fi
 # 9. PROMPT / P10K
 # ============================================================
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+# Disable shell completion sounds
+unsetopt LIST_BEEP
+unsetopt BEEP
