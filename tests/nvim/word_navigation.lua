@@ -49,12 +49,33 @@ nav.visual_right()
 eq(vim.api.nvim_win_get_cursor(0)[2], 76)
 eq(vim.api.nvim_win_get_cursor(0)[1], 1)
 
+-- Normal mode should land on the same word ends, and stop at the final word.
+vim.api.nvim_win_set_cursor(0, { 1, 43 })
+for _, expected_col in ipairs({ 44, 49, 56, 60, 76 }) do
+	nav.normal_right()
+	eq(vim.api.nvim_win_get_cursor(0)[2], expected_col)
+end
+nav.normal_right()
+eq(vim.api.nvim_win_get_cursor(0)[2], 76)
+eq(vim.api.nvim_win_get_cursor(0)[1], 1)
+
+-- Trailing punctuation is not a word and must not become a destination.
+vim.api.nvim_buf_set_lines(0, 0, -1, false, { "foo!!!", "bar" })
+vim.api.nvim_win_set_cursor(0, { 1, 0 })
+nav.normal_right()
+eq(vim.api.nvim_win_get_cursor(0)[2], 2)
+nav.normal_right()
+eq(vim.api.nvim_win_get_cursor(0)[2], 2)
+eq(vim.api.nvim_win_get_cursor(0)[1], 1)
+
 -- Ensure the actual user key binding calls this function, while Ctrl+Left stays unchanged.
 require("config.keymaps")
 local right_map = vim.fn.maparg("<C-Right>", "i", false, true)
 assert(type(right_map.callback) == "function", "Insert Ctrl+Right mapping not registered")
+local normal_right_map = vim.fn.maparg("<C-Right>", "n", false, true)
+assert(normal_right_map.callback == nav.normal_right, "Normal Ctrl+Right must use word-end motion")
 local visual_right_map = vim.fn.maparg("<C-Right>", "x", false, true)
-assert(type(visual_right_map.callback) == "function", "Visual Ctrl+Right mapping not registered")
+assert(visual_right_map.callback == nav.visual_right, "Visual Ctrl+Right must use word-end motion")
 local left_map = vim.fn.maparg("<C-Left>", "i", false, true)
 eq(left_map.rhs, "<C-o>b")
 

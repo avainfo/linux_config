@@ -20,24 +20,33 @@ function M.insert_right()
 	end
 end
 
--- Extend a characterwise Visual selection to the final character of the
--- current/next word. Visual mode is inclusive, unlike the Insert cursor.
-function M.visual_right()
+-- Normal and Visual modes both land on the last character of a word.
+-- Skip to the following word when already at its end, but never cross a line
+-- or advance onto trailing punctuation when there is no following word.
+function M.word_right()
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	local line = vim.api.nvim_get_current_line()
 	if #line == 0 then
 		return
 	end
-	local end_col = M.end_of_word_col(line, cursor[2])
-	local target_col = math.min(#line - 1, end_col - 1)
-	-- If we are already on the last character, jump to the next word.
+	local end_col = vim.fn.matchend(line, [[\k\+]], cursor[2])
+	if end_col < 0 then
+		return
+	end
+	local target_col = end_col - 1
 	if target_col <= cursor[2] then
-		end_col = M.end_of_word_col(line, cursor[2] + 1)
-		target_col = math.min(#line - 1, end_col - 1)
+		end_col = vim.fn.matchend(line, [[\k\+]], cursor[2] + 1)
+		if end_col < 0 then
+			return
+		end
+		target_col = end_col - 1
 	end
 	if target_col > cursor[2] then
 		vim.api.nvim_win_set_cursor(0, { cursor[1], target_col })
 	end
 end
+
+M.normal_right = M.word_right
+M.visual_right = M.word_right
 
 return M
