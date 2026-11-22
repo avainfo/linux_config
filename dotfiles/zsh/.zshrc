@@ -78,6 +78,7 @@ vim() {
         command nvim "$@"
     fi
 }
+alias v="vim"
 alias gs="git status"
 alias py="python3"
 alias rpy="rm -rf __pycache__"
