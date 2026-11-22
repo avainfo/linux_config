@@ -58,17 +58,5 @@ assert(type(visual_right_map.callback) == "function", "Visual Ctrl+Right mapping
 local left_map = vim.fn.maparg("<C-Left>", "i", false, true)
 eq(left_map.rhs, "<C-o>b")
 
--- w targets word ends in Normal and Visual modes, but keeps default operator motions.
-eq(vim.fn.maparg("w", "n", false, true).rhs, "e")
-eq(vim.fn.maparg("w", "x", false, true).rhs, "e")
-eq(vim.fn.maparg("w", "o"), "")
-
-vim.api.nvim_buf_set_lines(0, 0, -1, false, { "alpha beta gamma" })
-vim.api.nvim_win_set_cursor(0, { 1, 0 })
-vim.cmd("normal w")
-eq(vim.api.nvim_win_get_cursor(0)[2], 4) -- final a in alpha
-vim.cmd("normal w")
-eq(vim.api.nvim_win_get_cursor(0)[2], 9) -- final a in beta
-
 print("word navigation checks passed")
 vim.cmd.quitall({ bang = true })

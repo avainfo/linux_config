@@ -1,9 +1,6 @@
 vim.keymap.set("n", "<F2>", "<cmd>write<CR>", { noremap = true, silent = true })
 vim.keymap.set("i", "<F2>", "<Esc><cmd>write<CR>i", { noremap = true, silent = true })
 
--- Use w to move to the end of a word, without changing operator-pending dw/cw.
-vim.keymap.set({ "n", "x" }, "w", "e", { noremap = true, desc = "Move to end of word" })
-
 vim.keymap.set("n", "<C-Left>", "b", { noremap = true })
 vim.keymap.set("n", "<C-Right>", "w", { noremap = true })
 vim.keymap.set("i", "<C-Left>", "<C-o>b", { noremap = true })
