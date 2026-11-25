@@ -24,9 +24,15 @@ function M.on_attach(_, bufnr)
 	map("n", "gd", vim.lsp.buf.definition, "LSP definition")
 	map("n", "gD", vim.lsp.buf.declaration, "LSP declaration")
 	map("n", "gi", vim.lsp.buf.implementation, "LSP implementation")
-	map("n", "gr", function()
+	vim.keymap.set("n", "gr", function()
 		vim.cmd("Telescope lsp_references")
-	end, "LSP references (Telescope)")
+	end, {
+		buffer = bufnr,
+		noremap = true,
+		silent = true,
+		nowait = true,
+		desc = "LSP references (Telescope)",
+	})
 
 	map("n", "K", function()
 		require("config.lsp_hover_docs").hover()
