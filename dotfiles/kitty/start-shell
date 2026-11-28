@@ -1,12 +1,24 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-OS="$(uname -s)"
-
-if [ "$OS" = "Darwin" ]; then
-    # macOS : éviter la logique tmux fragile qui fait crasher kitty
+# macOS: start a regular login shell
+if [ "$(uname -s)" = "Darwin" ]; then
     exec zsh -l
 fi
 
-# Linux : garder ton comportement actuel
-SESSION_COUNT="$(tmux list-sessions 2>/dev/null | wc -l | tr -d ' ')"
-exec zsh -lc "tmux new-session -s tmux${SESSION_COUNT}"
+# Prevent inherited tmux state
+unset TMUX TMUX_PANE
+
+# Fall back to Zsh if tmux is unavailable
+if ! command -v tmux >/dev/null 2>&1; then
+    exec zsh -l
+fi
+
+# Find the first available session name
+i=0
+
+while tmux has-session -t "=tmux${i}" 2>/dev/null; do
+    i=$((i + 1))
+done
+
+# Keep the terminal usable even if tmux fails
+tmux new-session -s "tmux${i}" || exec zsh -l
